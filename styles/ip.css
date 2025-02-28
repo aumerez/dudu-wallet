@@ -1,43 +1,111 @@
-/* styles/ip.css */
+/* ip.css */
 .ip-container {
-    padding: 15px;
-    width: 100%;
-    box-sizing: border-box;
+    padding: 20px;
+    max-width: 600px;
+    margin: 0 auto;
 }
 
 .ip-section {
-    background-color: #1e1e1e;
-    border-radius: 12px;
-    padding: 16px;
     margin-bottom: 20px;
 }
 
 .ip-info-box {
-    color: #ffffff;
+    background: #f5f7fa;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .ip-info-box h3 {
     margin-top: 0;
-    margin-bottom: 12px;
+    color: #333;
     font-size: 18px;
 }
 
 .ip-actions {
     display: flex;
-    flex-direction: column;
     gap: 10px;
+    margin-top: 20px;
+}
+
+.ip-register-button, 
+.ip-action-button {
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.ip-register-button {
+    background-color: #3498db;
+    color: white;
+}
+
+.ip-register-button:hover {
+    background-color: #2980b9;
 }
 
 .ip-action-button {
-    padding: 12px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    cursor: pointer;
+    background-color: #ecf0f1;
+    color: #34495e;
 }
 
 .ip-action-button:hover {
-    background-color: #45a049;
+    background-color: #bdc3c7;
+}
+
+.register-form {
+    margin-top: 16px;
+}
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+    color: #555;
+}
+
+.form-control {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.form-text {
+    font-size: 12px;
+    color: #7f8c8d;
+    margin-top: 4px;
+}
+
+.ip-status {
+    margin-top: 16px;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+#ip-status-message {
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+#ip-status-message.success {
+    color: #27ae60;
+}
+
+#ip-status-message.error {
+    color: #e74c3c;
+}
+
+#ip-transaction-hash {
+    font-size: 12px;
+    word-break: break-all;
+    margin-top: 5px;
 }

@@ -1,16 +1,35 @@
 <!-- views/ip.html -->
 <div class="content-main">
     <div class="ip-container">
-        <h2>IP Information</h2>
+        <h2>IP Registration</h2>
         
         <div class="ip-section">
             <div class="ip-info-box">
-                <h3>IP Token</h3>
-                <p>Token details and information will be displayed here.</p>
+                <h3>Register NFT as IP Asset</h3>
+                <p>Register your NFT with the Story Protocol IP Asset Registry</p>
+                
+                <div class="register-form">
+                    <div class="form-group">
+                        <label for="tokenContract">NFT Contract Address</label>
+                        <input type="text" id="tokenContract" placeholder="0x..." class="form-control">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="tokenId">Token ID</label>
+                        <input type="text" id="tokenId" placeholder="Token ID" class="form-control">
+                        <small class="form-text">The ID of your NFT token</small>
+                    </div>
+                </div>
             </div>
         </div>
         
+        <div class="ip-status">
+            <div id="ip-status-message"></div>
+            <div id="ip-transaction-hash"></div>
+        </div>
+        
         <div class="ip-actions">
+            <button class="ip-register-button">Register IP</button>
             <button class="ip-action-button">View Documentation</button>
         </div>
     </div>

@@ -266,9 +266,20 @@ function setupTabNavigation() {
         // Load IP content dynamically
         await loadContent('ip');
         
-        // Initialize IP-specific scripts if needed
+        // Wait a moment for DOM to update
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        // Check if IP script is already loaded
+        if (!window.ipScriptLoaded) {
+            await window.loadScript('../scripts/views/ip.js');
+            window.ipScriptLoaded = true;
+        }
+        
+        // Initialize IP-specific scripts
         if (window.initIP && typeof window.initIP === 'function') {
             window.initIP();
+        } else {
+            console.error('initIP function not found after loading script');
         }
         
         // Update tabs
