@@ -2,7 +2,6 @@
 window.SwapModule = (function() {
     // Private variables
     const EXCHANGE_RATE = 0.00001; // 1 IP = 0.00001 IP
-    let openDropdown = null; // Keeps track of the currently open dropdown
 
     // Demo token list - using your actual tokens
     const tokens = [
@@ -207,7 +206,101 @@ window.SwapModule = (function() {
 
             .swap-button {
                 position: relative;
-                z-index: 10000; /* Ensure the swap button stays interactive */
+                z-index: 1; /* Ensure the swap button stays interactive */
+            }
+
+            .modal {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.75);
+                z-index: 99999 !important; /* Ensure it's above everything */
+                align-items: center;
+                justify-content: center;
+            }
+
+            .modal-content {
+                background: #121212;
+                padding: 20px;
+                border-radius: 12px;
+                width: 90%;
+                max-width: 400px;
+                box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+                z-index: 100000 !important; /* Ensure content stays above other elements */
+            }
+
+            .modal-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 10px;
+            }
+
+            .close-modal {
+                background: none;
+                border: none;
+                color: white;
+                font-size: 20px;
+                cursor: pointer;
+            }
+
+            .search-container {
+                margin-bottom: 10px;
+            }
+
+            .search-container input {
+                width: 100%;
+                padding: 8px;
+                border-radius: 6px;
+                border: 1px solid #444;
+                background: #1e1e1e;
+                color: white;
+            }
+
+            .token-list {
+                max-height: 300px;
+                overflow-y: auto;
+            }
+
+            .token-item {
+                display: flex;
+                align-items: center;
+                padding: 10px;
+                cursor: pointer;
+                border-bottom: 1px solid #333;
+            }
+
+            .token-item:hover {
+                background-color: #2a2a2a;
+            }
+
+            .token-logo {
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                margin-right: 10px;
+                background-size: cover;
+            }
+
+            .token-info {
+                flex: 1;
+            }
+
+            .token-symbol {
+                font-weight: bold;
+            }
+
+            .token-name {
+                font-size: 12px;
+                color: #999;
+            }
+
+            .token-balance {
+                font-size: 12px;
+                color: #999;
             }
         `;
         document.head.appendChild(style);
@@ -294,77 +387,87 @@ window.SwapModule = (function() {
 
     // Toggle token selector dropdown visibility
     function toggleTokenSelector(type) {
-        console.log(`toggleTokenSelector called for: ${type}`);
+        console.log(`Opening modal for: ${type}`);
     
-        const dropdown = document.getElementById(`${type}TokenSelectorDropdown`);
-        if (!dropdown) {
-            console.error(`${type} token selector dropdown not found`);
+        const modal = document.getElementById('tokenSelectModal');
+    
+        if (!modal) {
+            console.error("❌ Modal not found in the DOM!");
             return;
         }
     
-        // If clicking the same dropdown that's already open, close it
-        if (openDropdown === dropdown) {
-            dropdown.style.display = 'none';
-            console.log(`${type} token selector dropdown hidden`);
-            openDropdown = null; // Reset state
+        console.log(`✅ Modal found. Current display: ${modal.style.display}`);
+    
+        // If the event was triggered from the modal itself, ignore it
+        if (event.target.closest('.modal-content')) {
+            console.log("❌ Preventing immediate closing due to internal click.");
             return;
         }
     
-        // Close any previously open dropdown before opening a new one
-        if (openDropdown) {
-            openDropdown.style.display = 'none';
+        // Prevent accidental double clicks from toggling
+        if (modal.style.display === 'flex') {
+            console.log(`❌ Modal already open, ignoring duplicate event.`);
+            return;
         }
     
-        // Position the new dropdown
-        const selectorButton = document.getElementById(`${type}TokenSelector`);
-        if (selectorButton) {
-            const rect = selectorButton.getBoundingClientRect();
-            dropdown.style.left = `${rect.left}px`;
-            dropdown.style.top = `${rect.bottom}px`;
-            console.log(`Dropdown positioned at left: ${rect.left}, top: ${rect.bottom}`);
-        }
-    
-        // Populate dropdown and show it
-        populateTokenSelector(dropdown, type);
-        dropdown.style.display = 'block';
-        openDropdown = dropdown; // Track the currently open dropdown
-        console.log(`${type} token selector dropdown displayed`);
+        // Populate and show the modal
+        currentSelector = type;
+        populateTokenModal(type);
+        modal.style.display = 'flex';
+        console.log(`✅ Modal displayed for: ${type}`);
     }
 
     // Populate token selector dropdown
-    function populateTokenSelector(dropdown, type) {
-        try {
-            dropdown.innerHTML = '';
-            
-            tokens.forEach(token => {
-                // Skip the current token in the other selector
-                if ((type === 'from' && token.symbol === toToken.symbol) ||
-                    (type === 'to' && token.symbol === fromToken.symbol)) {
-                    return;
-                }
-                
-                const item = document.createElement('div');
-                item.className = 'token-selector-item';
-                item.innerHTML = `
-                    <div class="token-logo-small" style="background-image: url(${token.logo})"></div>
-                    <div class="token-info">
-                        <div class="token-symbol-text">${token.symbol}</div>
-                        <div class="token-name-text">${token.name}</div>
-                    </div>
-                    <div class="token-balance-text">${token.balance.toFixed(2)}</div>
-                `;
-                
-                item.addEventListener('click', () => {
-                    selectToken(token, type);
-                    dropdown.style.display = 'none';
-                });
-                
-                dropdown.appendChild(item);
+    function populateTokenModal(type) {
+        const tokenList = document.getElementById('tokenList');
+        if (!tokenList) return;
+    
+        tokenList.innerHTML = ''; // Clear previous entries
+    
+        tokens.forEach(token => {
+            if ((type === 'from' && token.symbol === toToken.symbol) ||
+                (type === 'to' && token.symbol === fromToken.symbol)) {
+                return; // Prevent selecting the same token
+            }
+    
+            const item = document.createElement('div');
+            item.className = 'token-item';
+            item.innerHTML = `
+                <div class="token-logo" style="background-image: url(${token.logo})"></div>
+                <div class="token-info">
+                    <div class="token-symbol">${token.symbol}</div>
+                    <div class="token-name">${token.name}</div>
+                </div>
+                <div class="token-balance">${token.balance.toFixed(2)}</div>
+            `;
+    
+            item.addEventListener('click', () => {
+                selectToken(token, type);
+                closeTokenModal();
             });
-        } catch (error) {
-            console.error('Error populating token selector:', error);
-        }
+    
+            tokenList.appendChild(item);
+        });
     }
+
+    function closeTokenModal() {
+        document.getElementById('tokenSelectModal').style.display = 'none';
+    }
+
+    document.addEventListener('click', (event) => {
+        const modal = document.getElementById('tokenSelectModal');
+    
+        // If clicking inside the modal, do nothing
+        if (event.target.closest('.modal-content') || event.target.closest('.token-selector')) {
+            return;
+        }
+    
+        // Hide the modal when clicking outside
+        if (modal && modal.style.display === 'flex') {
+            modal.style.display = 'none';
+            console.log("❌ Modal closed due to outside click.");
+        }
+    });
 
     // Select a token
     function selectToken(token, type) {
@@ -421,6 +524,20 @@ window.SwapModule = (function() {
         }
     }
 
+    document.addEventListener("DOMContentLoaded", function () {
+        console.log("✅ DOM fully loaded, initializing swap module...");
+    
+        const modal = document.getElementById('tokenSelectModal');
+        if (!modal) {
+            console.error("❌ Modal still not found after DOMContentLoaded!");
+        } else {
+            console.log("✅ Modal found successfully");
+            modal.style.display = 'none'; // Hide it on load
+        }
+    
+        window.initSwap();
+    });
+
     // Public methods - the API exposed to the outside
     return {
         initialize: async function() {
@@ -461,6 +578,8 @@ window.SwapModule = (function() {
         refreshBalances: function() {
             updateTokenDisplay();
         }
+
+        
     };
 })();
 

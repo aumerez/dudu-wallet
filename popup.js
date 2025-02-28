@@ -220,19 +220,29 @@ function setupTabNavigation() {
     });
     
     // Switch to swap screen
+    // Switch to swap screen
     swapTab.addEventListener('click', async () => {
         hideAllScreens();
         
         // Show dynamic content screen first
         document.getElementById('dynamicContentScreen').classList.add('active');
-        
+
         // Load swap content
         const contentLoaded = await loadContent('swap');
-        
+
         // Wait for a moment to ensure DOM is updated
         await new Promise(resolve => setTimeout(resolve, 100));
-        
-        // Now load and initialize the script
+
+        // Ensure the modal is now in the DOM
+        const modal = document.getElementById('tokenSelectModal');
+        if (!modal) {
+            console.error("❌ Modal not found after swap content loaded!");
+        } else {
+            console.log("✅ Modal found after swap content loaded!");
+            modal.style.display = 'none'; // Ensure it starts hidden
+        }
+
+        // Load and initialize the script
         if (!window.SwapModule) {
             return new Promise((resolve) => {
                 const script = document.createElement('script');
@@ -250,7 +260,7 @@ function setupTabNavigation() {
                 window.initSwap();
             }
         }
-        
+
         // Update tabs
         deactivateAllTabs();
         swapTab.classList.add('active');
