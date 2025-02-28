@@ -1,45 +1,58 @@
-// swap.js - Module pattern implementation
+// swap.js - Module pattern implementation with fixes for modal issues
 window.SwapModule = (function() {
     // Private variables
     const EXCHANGE_RATE = 0.00001; // 1 IP = 0.00001 IP
+    let openDropdown = null; // Keeps track of the currently open dropdown
 
-    // Demo token list
+    // Demo token list - using your actual tokens
     const tokens = [
+        { 
+            symbol: 'PIPE', 
+            name: 'PIPE Token', 
+            logo: 'https://via.placeholder.com/40',
+            balance: 1000.00,
+            address: '0x1514000000000000000000000000000000000000'
+        },
         { 
             symbol: 'IP', 
             name: 'Infinium Protocol', 
             logo: 'https://via.placeholder.com/40',
-            balance: 1000.00
+            balance: 500.00,
+            address: '0x1514000000000000000000000000000000000000'
         },
         { 
-            symbol: 'ETH', 
-            name: 'Ethereum', 
+            symbol: 'SONA', 
+            name: 'SONA Token', 
             logo: 'https://via.placeholder.com/40',
-            balance: 0.05
+            balance: 250.00,
+            address: '0xcd97F8B916F1d99272C414D7cb5D1466Ef7BDB1c'
         },
         { 
-            symbol: 'BTC', 
-            name: 'Bitcoin', 
+            symbol: 'WTF', 
+            name: 'WTF Token', 
             logo: 'https://via.placeholder.com/40',
-            balance: 0.001
+            balance: 100.00,
+            address: '0x16487b402817744f78482631362e6873d2EdddcC'
         },
         { 
-            symbol: 'USDT', 
-            name: 'Tether', 
+            symbol: 'IPPY', 
+            name: 'IPPY Token', 
             logo: 'https://via.placeholder.com/40',
-            balance: 150.00
+            balance: 75.00,
+            address: '0x3DB30395a01FE669563Ef6f4c1adEc031a9f60EA'
         },
         { 
-            symbol: 'DOGE', 
-            name: 'Dogecoin', 
+            symbol: 'CRUNCH', 
+            name: 'CRUNCH Token', 
             logo: 'https://via.placeholder.com/40',
-            balance: 500.00
+            balance: 50.00,
+            address: '0xb2621056047CbdF37282C24006bd9302061ae94C'
         }
     ];
 
     // Private state variables
-    let fromToken = tokens[0]; // Default from token (IP)
-    let toToken = tokens[1]; // Default to token (ETH)
+    let fromToken = tokens[0]; // Default from token (PIPE)
+    let toToken = tokens[1]; // Default to token (IP)
     let fromAmount = 0;
     let toAmount = 0;
     let currentSelector = null; // Which token selector was clicked
@@ -47,39 +60,23 @@ window.SwapModule = (function() {
     // Private DOM element references
     let fromAmountInput, toAmountInput, fromTokenSelector, toTokenSelector;
     let fromBalanceEl, toBalanceEl, swapRateEl, swapButton;
-    let tokenSelectModal, tokenList, tokenSearch;
+    
+    // NO MODAL VARIABLES STORED HERE - We'll work with them directly
 
     // Private methods
     function initSwapInterface() {
         console.log("Attempting to initialize swap interface...");
         
-        // Use a polling approach to wait for elements
-        function waitForSwapElements() {
-            // Check for the key elements
-            const elementsToCheck = [
-                'fromAmount', 'toAmount', 'fromTokenSelector', 'toTokenSelector',
-                'fromBalance', 'toBalance', 'swapRate', 'swapButton'
-            ];
-            
-            for (const id of elementsToCheck) {
-                if (!document.getElementById(id)) {
-                    console.log(`Element not found: ${id}`);
-                    return false;
-                }
-            }
-            
-            return true;
-        }
+        // Simple check for a few critical elements
+        fromAmountInput = document.getElementById('fromAmount');
+        toAmountInput = document.getElementById('toAmount');
         
-        // If elements aren't ready, don't proceed
-        if (!waitForSwapElements()) {
-            console.log("Essential swap interface elements not found");
+        if (!fromAmountInput || !toAmountInput) {
+            console.error("Critical swap elements not found");
             return false;
         }
         
-        // Now we know elements exist, get references
-        fromAmountInput = document.getElementById('fromAmount');
-        toAmountInput = document.getElementById('toAmount');
+        // Since we found basic elements, get the rest
         fromTokenSelector = document.getElementById('fromTokenSelector');
         toTokenSelector = document.getElementById('toTokenSelector');
         fromBalanceEl = document.getElementById('fromBalance');
@@ -87,43 +84,147 @@ window.SwapModule = (function() {
         swapRateEl = document.getElementById('swapRate');
         swapButton = document.getElementById('swapButton');
         
-        // These might be null, so check before using
-        tokenSelectModal = document.getElementById('tokenSelectModal');
-        tokenList = tokenSelectModal ? document.getElementById('tokenList') : null;
-        tokenSearch = tokenSelectModal ? document.getElementById('tokenSearch') : null;
+        // Make sure we have all needed elements
+        if (!fromTokenSelector || !toTokenSelector || !fromBalanceEl || 
+            !toBalanceEl || !swapRateEl || !swapButton) {
+            console.error("Some swap interface elements are missing");
+            return false;
+        }
+        
+        // Create HTML for inline token selection instead of modal
+        createInlineTokenSelector();
         
         // Set initial token information
         updateTokenDisplay();
         updateSwapRate();
         
-        // Add event listeners - only to elements we confirmed exist
+        // Add event listeners
         fromAmountInput.addEventListener('input', handleFromAmountChange);
-        fromTokenSelector.addEventListener('click', () => openTokenSelect('from'));
-        toTokenSelector.addEventListener('click', () => openTokenSelect('to'));
+        
+        // Set up token selector clicks
+        fromTokenSelector.addEventListener('click', () => toggleTokenSelector('from'));
+        toTokenSelector.addEventListener('click', () => toggleTokenSelector('to'));
         
         const swapDirectionBtn = document.getElementById('swapDirectionBtn');
-        if (swapDirectionBtn) {
-            swapDirectionBtn.addEventListener('click', swapTokens);
-        }
-        
-        // Optional elements - only add listeners if they exist
-        if (tokenSelectModal) {
-            const closeModalBtn = document.getElementById('closeModalBtn');
-            if (closeModalBtn) {
-                closeModalBtn.addEventListener('click', closeTokenSelect);
-            }
-            
-            if (tokenSearch) {
-                tokenSearch.addEventListener('input', filterTokens);
-            }
-        }
-        
         if (swapButton) {
             swapButton.addEventListener('click', handleSwap);
+            console.log("Swap button event listener attached");
+        } else {
+            console.error("Swap button not found");
         }
+        
+        if (swapDirectionBtn) {
+            swapDirectionBtn.addEventListener('click', swapTokens);
+            console.log("Swap direction button event listener attached");
+        } else {
+            console.error("Swap direction button not found");
+        }
+        
+        document.addEventListener('click', (event) => {
+            if (event.target.closest('#fromTokenSelector') || event.target.closest('#toTokenSelector')) {
+                return; // Don't close if clicking the selector button
+            }
+        
+            const fromSelector = document.getElementById('fromTokenSelectorDropdown');
+            const toSelector = document.getElementById('toTokenSelectorDropdown');
+        
+            if (fromSelector && fromSelector.style.display === 'block' &&
+                !event.target.closest('#fromTokenSelectorDropdown')) {
+                fromSelector.style.display = 'none';
+            }
+        
+            if (toSelector && toSelector.style.display === 'block' &&
+                !event.target.closest('#toTokenSelectorDropdown')) {
+                toSelector.style.display = 'none';
+            }
+        });
         
         console.log("Swap interface initialized successfully");
         return true;
+    }
+
+    // Create inline token selectors instead of a modal
+    function createInlineTokenSelector() {
+        // Add needed styles
+        const style = document.createElement('style');
+            style.textContent = `
+                .token-selector-dropdown {
+                z-index: 9999 !important;
+                position: absolute;
+                background-color: #1e1e1e;
+                min-width: 200px;
+                max-height: 300px;
+                overflow-y: auto;
+                border-radius: 8px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                margin-top: 5px;
+                display: none; /* Ensure it starts hidden */
+                pointer-events: auto; /* Ensure it is clickable */
+            }
+
+            .swap-container, .swap-section {
+                overflow: visible !important; /* Ensure dropdowns are not cut off */
+                position: relative;
+            }
+            
+            .token-selector-item {
+                display: flex;
+                align-items: center;
+                padding: 10px;
+                cursor: pointer;
+                border-bottom: 1px solid #333;
+            }
+            
+            .token-selector-item:hover {
+                background-color: #2a2a2a;
+            }
+            
+            .token-logo-small {
+                width: 24px;
+                height: 24px;
+                border-radius: 50%;
+                margin-right: 10px;
+                background-size: cover;
+            }
+            
+            .token-info {
+                flex: 1;
+            }
+            
+            .token-symbol-text {
+                font-weight: bold;
+            }
+            
+            .token-name-text {
+                font-size: 12px;
+                color: #999;
+            }
+            
+            .token-balance-text {
+                font-size: 12px;
+                color: #999;
+            }
+
+            .swap-button {
+                position: relative;
+                z-index: 10000; /* Ensure the swap button stays interactive */
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Create from token selector dropdown
+        const fromDropdown = document.createElement('div');
+        fromDropdown.id = 'fromTokenSelectorDropdown';
+        fromDropdown.className = 'token-selector-dropdown';
+        document.body.appendChild(fromDropdown);
+        
+        // Create to token selector dropdown
+        const toDropdown = document.createElement('div');
+        toDropdown.id = 'toTokenSelectorDropdown';
+        toDropdown.className = 'token-selector-dropdown';
+        document.body.appendChild(toDropdown);
+        
+        console.log('Token selectors created');
     }
 
     function updateTokenDisplay() {
@@ -157,7 +258,7 @@ window.SwapModule = (function() {
     function validateSwapButton() {
         if (fromAmount <= 0) {
             swapButton.disabled = true;
-            swapButton.textContent = 'Enter an amount';
+            swapButton.textContent = 'Swap';
             return;
         }
         
@@ -191,71 +292,85 @@ window.SwapModule = (function() {
         validateSwapButton();
     }
 
-    function openTokenSelect(selectorType) {
-        currentSelector = selectorType;
-        tokenSelectModal.style.display = 'flex';
-        
-        // Clear search
-        tokenSearch.value = '';
-        
-        // Populate token list
-        populateTokenList();
-        
-        // Focus the search input
-        setTimeout(() => tokenSearch.focus(), 100);
+    // Toggle token selector dropdown visibility
+    function toggleTokenSelector(type) {
+        console.log(`toggleTokenSelector called for: ${type}`);
+    
+        const dropdown = document.getElementById(`${type}TokenSelectorDropdown`);
+        if (!dropdown) {
+            console.error(`${type} token selector dropdown not found`);
+            return;
+        }
+    
+        // If clicking the same dropdown that's already open, close it
+        if (openDropdown === dropdown) {
+            dropdown.style.display = 'none';
+            console.log(`${type} token selector dropdown hidden`);
+            openDropdown = null; // Reset state
+            return;
+        }
+    
+        // Close any previously open dropdown before opening a new one
+        if (openDropdown) {
+            openDropdown.style.display = 'none';
+        }
+    
+        // Position the new dropdown
+        const selectorButton = document.getElementById(`${type}TokenSelector`);
+        if (selectorButton) {
+            const rect = selectorButton.getBoundingClientRect();
+            dropdown.style.left = `${rect.left}px`;
+            dropdown.style.top = `${rect.bottom}px`;
+            console.log(`Dropdown positioned at left: ${rect.left}, top: ${rect.bottom}`);
+        }
+    
+        // Populate dropdown and show it
+        populateTokenSelector(dropdown, type);
+        dropdown.style.display = 'block';
+        openDropdown = dropdown; // Track the currently open dropdown
+        console.log(`${type} token selector dropdown displayed`);
     }
 
-    function closeTokenSelect() {
-        tokenSelectModal.style.display = 'none';
-        currentSelector = null;
-    }
-
-    function populateTokenList() {
-        tokenList.innerHTML = '';
-        
-        tokens.forEach(token => {
-            // Skip the token that's already selected in the other selector
-            if ((currentSelector === 'from' && token.symbol === toToken.symbol) ||
-                (currentSelector === 'to' && token.symbol === fromToken.symbol)) {
-                return;
-            }
+    // Populate token selector dropdown
+    function populateTokenSelector(dropdown, type) {
+        try {
+            dropdown.innerHTML = '';
             
-            const tokenItem = document.createElement('div');
-            tokenItem.className = 'token-item';
-            tokenItem.innerHTML = `
-                <div class="token-item-logo" style="background-image: url(${token.logo})"></div>
-                <div class="token-item-info">
-                    <div class="token-item-symbol">${token.symbol}</div>
-                    <div class="token-item-name">${token.name}</div>
-                </div>
-                <div class="token-item-balance">${token.balance.toFixed(2)}</div>
-            `;
-            
-            tokenItem.addEventListener('click', () => selectToken(token));
-            tokenList.appendChild(tokenItem);
-        });
+            tokens.forEach(token => {
+                // Skip the current token in the other selector
+                if ((type === 'from' && token.symbol === toToken.symbol) ||
+                    (type === 'to' && token.symbol === fromToken.symbol)) {
+                    return;
+                }
+                
+                const item = document.createElement('div');
+                item.className = 'token-selector-item';
+                item.innerHTML = `
+                    <div class="token-logo-small" style="background-image: url(${token.logo})"></div>
+                    <div class="token-info">
+                        <div class="token-symbol-text">${token.symbol}</div>
+                        <div class="token-name-text">${token.name}</div>
+                    </div>
+                    <div class="token-balance-text">${token.balance.toFixed(2)}</div>
+                `;
+                
+                item.addEventListener('click', () => {
+                    selectToken(token, type);
+                    dropdown.style.display = 'none';
+                });
+                
+                dropdown.appendChild(item);
+            });
+        } catch (error) {
+            console.error('Error populating token selector:', error);
+        }
     }
 
-    function filterTokens() {
-        const searchText = tokenSearch.value.toLowerCase();
-        
-        const tokenItems = tokenList.querySelectorAll('.token-item');
-        tokenItems.forEach(item => {
-            const symbol = item.querySelector('.token-item-symbol').textContent.toLowerCase();
-            const name = item.querySelector('.token-item-name').textContent.toLowerCase();
-            
-            if (symbol.includes(searchText) || name.includes(searchText)) {
-                item.style.display = 'flex';
-            } else {
-                item.style.display = 'none';
-            }
-        });
-    }
-
-    function selectToken(token) {
-        if (currentSelector === 'from') {
+    // Select a token
+    function selectToken(token, type) {
+        if (type === 'from') {
             fromToken = token;
-        } else if (currentSelector === 'to') {
+        } else if (type === 'to') {
             toToken = token;
         }
         
@@ -263,33 +378,34 @@ window.SwapModule = (function() {
         updateTokenDisplay();
         updateSwapRate();
         
-        // Reset amounts if token changed
+        // Reset amounts
         fromAmountInput.value = '';
         toAmountInput.value = '';
         fromAmount = 0;
         toAmount = 0;
-        
-        // Close the modal
-        closeTokenSelect();
     }
 
     function handleSwap() {
-        // In a real app, this would call a contract method to execute the swap
-        alert(`Swapping ${fromAmount} ${fromToken.symbol} for ${toAmount} ${toToken.symbol}`);
-        
-        // For demo purposes, update balances
+        console.log(`Swap button clicked - Swapping ${fromAmount} ${fromToken.symbol} for ${toAmount} ${toToken.symbol}`);
+    
+        if (fromAmount <= 0 || fromAmount > fromToken.balance) {
+            console.error("Invalid swap amount, swap not executed.");
+            return;
+        }
+    
+        // Simulate token swap
         fromToken.balance -= fromAmount;
         toToken.balance += toAmount;
-        
+    
         // Update UI
         updateTokenDisplay();
-        
+    
         // Reset inputs
         fromAmountInput.value = '';
         toAmountInput.value = '';
         fromAmount = 0;
         toAmount = 0;
-        
+    
         // Update button state
         validateSwapButton();
     }
@@ -350,5 +466,12 @@ window.SwapModule = (function() {
 
 // Set initSwap as the initialization function
 window.initSwap = function() {
-    window.SwapModule.initialize();
+    console.log('initSwap function called');
+    window.SwapModule.initialize()
+        .then(success => {
+            console.log('SwapModule initialization ' + (success ? 'succeeded' : 'failed'));
+        })
+        .catch(error => {
+            console.error('Error during SwapModule initialization:', error);
+        });
 };
