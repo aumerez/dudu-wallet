@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             symbol: 'PIPE',
             name: 'PIPE Token',
             isNative: false,
-            address: '0xB425282FEAe46277e8D6a2A4EEF7A09EFCAA8B8F',
+            address: '0x7D968e89Cb2f9920f1321a75E53feDc573552836',
             color: '#7848F4'
         }
         // Add more tokens here as needed

@@ -44,3 +44,31 @@
 #dynamicContent .modal {
     z-index: 9999;
 }
+
+.tx-status-container {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 6px;
+    text-align: center;
+}
+
+.status-success {
+    background-color: #28a745;
+    color: white;
+}
+
+.status-error {
+    background-color: #dc3545;
+    color: white;
+}
+
+.status-rejected {
+    background-color: #ffc107;
+    color: black;
+}
+
+.hash-button {
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+}

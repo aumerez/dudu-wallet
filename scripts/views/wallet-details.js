@@ -148,7 +148,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 async function getPIPEBalance(web3, address) {
     // PIPE Token Contract Address
-    const PIPE_CONTRACT_ADDRESS = '0xB425282FEAe46277e8D6a2A4EEF7A09EFCAA8B8F';
+    const PIPE_CONTRACT_ADDRESS = '0x7D968e89Cb2f9920f1321a75E53feDc573552836';
     
     // Standard ERC20 ABI (minimized to just what we need for balanceOf)
     const ERC20_ABI = [
