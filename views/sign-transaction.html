@@ -1,0 +1,45 @@
+<!-- sign-transaction.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="../styles/popup.css">
+    <link rel="stylesheet" href="../styles/sign-transaction.css">
+    <title>Sign Transaction</title>
+</head>
+<body>
+    <div class="container">
+        <h2>Sign Transaction</h2>
+        
+        <div class="transaction-card">
+            <div class="tx-detail">
+                <label>From</label>
+                <div id="fromAddress" class="address"></div>
+            </div>
+
+            <div class="tx-detail">
+                <label>To</label>
+                <div id="toAddress" class="address"></div>
+            </div>
+
+            <div class="tx-detail">
+                <label>Amount</label>
+                <div id="amount" class="value"></div>
+            </div>
+
+            <div class="tx-detail">
+                <label>Network Fee</label>
+                <div id="gasInfo" class="value"></div>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button id="rejectBtn" class="btn-secondary">Reject</button>
+            <button id="signBtn" class="btn-primary">Sign</button>
+        </div>
+    </div>
+
+    <script src="../lib/web3.min.js"></script>
+    <script src="../scripts/utils/crypto.js"></script>
+    <script src="../scripts/views/sign-transaction.js"></script>
+</body>
+</html>

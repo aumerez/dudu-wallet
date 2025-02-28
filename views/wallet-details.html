@@ -1,0 +1,72 @@
+<!-- wallet-details.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="../styles/popup.css">
+    <link rel="stylesheet" href="../styles/wallet-details.css">
+    <title>Wallet Details</title>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <button id="backButton" class="back-btn">&larr; Back</button>
+        </div>
+        
+        <div class="wallet-info-card">
+            <div class="wallet-name"></div>
+            <div class="wallet-address-container">
+                <div class="wallet-address"></div>
+            </div>
+        </div>
+
+        <div class="balance-card">
+            <div class="balance-header">
+                <div class="balance-label">IP Balance</div>
+                <button id="transferIPButton" class="send-btn">Send</button>
+            </div>
+            <div id="storyBalance" class="balance-value">Loading...</div>
+        </div>
+        
+        <!-- PIPE Token Balance Card -->
+        <div class="balance-card">
+            <div class="balance-header">
+                <div class="balance-label">PIPE Token Balance</div>
+                <button id="transferPIPEButton" class="send-btn pipe-send">Send</button>
+            </div>
+
+            <div id="pipeBalance" class="balance-value">Loading...</div>
+        </div>
+
+        <div class="private-key-card">
+            <button id="showPrivateKeyBtn" class="secondary-btn">Show Private Key</button>
+            <div id="privateKeyContainer" class="private-key-container" style="display: none;">
+                <div class="private-key-label">Private Key:</div>
+                <div class="private-key-value" id="privateKeyValue"></div>
+                <button id="copyPrivateKeyBtn" class="copy-btn">Copy</button>
+            </div>
+        </div>
+
+        <div id="passwordModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <h3>Enter Password</h3>
+                <p class="modal-description">Please enter your password to reveal the private key.</p>
+                
+                <div class="input-group">
+                    <input type="password" id="passwordInput" placeholder="Enter your password">
+                    <div id="passwordError" class="error-message" style="display: none;"></div>
+                </div>
+
+                <div class="modal-buttons">
+                    <button id="cancelPasswordBtn" class="secondary-btn">Cancel</button>
+                    <button id="confirmPasswordBtn" class="primary-btn">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../scripts/utils/bip39.js"></script>
+    <script src="../scripts/utils/crypto.js"></script>
+    <script src="../lib/web3.min.js"></script>
+    <script src="../scripts/views/wallet-details.js"></script>
+</body>
+</html>

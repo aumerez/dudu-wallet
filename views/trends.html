@@ -1,0 +1,51 @@
+<!-- trends.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="../styles/trends.css">
+    <title>Trending Memecoins</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <div class="trends-container">
+        <h2>Trending Memecoins</h2>
+        
+        <!-- Loading indicator -->
+        <div id="loadingIndicator" class="loading-container">
+            <div class="loading-spinner"></div>
+            <p>Loading trending coins...</p>
+        </div>
+        
+        <!-- Error state -->
+        <div id="errorContainer" class="error-container" style="display: none;">
+            <p>Unable to load trending coins. Please try again later.</p>
+            <button id="retryButton" class="retry-button">Retry</button>
+        </div>
+        
+        <!-- Trends list -->
+        <div id="trendsList" class="trends-list" style="display: none;">
+            <!-- Trend items will be added here dynamically -->
+        </div>
+        
+        <!-- Last updated info -->
+        <div class="last-updated">
+            <span id="lastUpdatedTime">Last updated: --</span>
+            <button id="refreshButton" class="refresh-button">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M23 4v6h-6"></path>
+                    <path d="M1 20v-6h6"></path>
+                    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"></path>
+                    <path d="M20.49 15a9 9 0 0 1-14.85 3.36L1 14"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Template for each trending coin -->
+    <template id="trendItemTemplate">
+        <div class="trend-item">
+            <div class="trend-item-left">
+                <div class="coin-logo"></div>
+                <div class="coin-info">
+                    <div class

@@ -1,0 +1,40 @@
+{
+  "manifest_version": 3,
+  "name": "Simple Crypto Wallet",
+  "version": "1.0",
+  "description": "A basic cryptocurrency wallet extension",
+  "icons": {
+    "16": "assets/icons/icon16.png",
+    "48": "assets/icons/icon48.png",
+    "128": "assets/icons/icon128.png"
+  },
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["scripts/content.js"],
+      "run_at": "document_start",
+      "all_frames": true
+    }
+  ],
+  "web_accessible_resources": [{
+    "resources": ["views/*", "scripts/*", "styles/*", "scripts/injected-script.js"],
+    "matches": ["<all_urls>"]
+  }],
+  "action": {
+    "default_popup": "views/popup.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; frame-src https://aeneid.storyscan.io"
+  }
+}

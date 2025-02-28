@@ -1,0 +1,43 @@
+/* styles/ip.css */
+.ip-container {
+    padding: 15px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.ip-section {
+    background-color: #1e1e1e;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 20px;
+}
+
+.ip-info-box {
+    color: #ffffff;
+}
+
+.ip-info-box h3 {
+    margin-top: 0;
+    margin-bottom: 12px;
+    font-size: 18px;
+}
+
+.ip-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.ip-action-button {
+    padding: 12px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.ip-action-button:hover {
+    background-color: #45a049;
+}

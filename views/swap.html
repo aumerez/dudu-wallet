@@ -1,0 +1,85 @@
+<!-- views/swap.html -->
+<div class="content-main">
+    <style>
+        /* Critical swap-specific styles */
+        .swap-container {
+            padding: 15px;
+        }
+        
+        .swap-section {
+            background-color: #1e1e1e;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+        
+        /* Add other critical styles here */
+    </style>
+    <div class="swap-container">
+        <h2 class="swap-title">Swap Tokens</h2>
+        <!-- From token section -->
+        <div class="swap-section">
+            <div class="swap-header">
+                <span>From</span>
+                <span class="balance-info">Balance: <span id="fromBalance">0.00</span></span>
+            </div>
+            <div class="swap-input-container">
+                <input type="number" id="fromAmount" placeholder="0.0" class="swap-input">
+                <button id="fromTokenSelector" class="token-selector">
+                    <div class="token-logo"></div>
+                    <span class="token-symbol">IP</span>
+                    <svg class="dropdown-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Swap direction button -->
+        <div class="swap-direction-container">
+            <button id="swapDirectionBtn" class="swap-direction-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+            </button>
+        </div>
+        
+        <!-- To token section -->
+        <div class="swap-section">
+            <div class="swap-header">
+                <span>To</span>
+                <span class="balance-info">Balance: <span id="toBalance">0.00</span></span>
+            </div>
+            <div class="swap-input-container">
+                <input type="number" id="toAmount" placeholder="0.0" class="swap-input" readonly>
+                <button id="toTokenSelector" class="token-selector">
+                    <div class="token-logo to-token-logo"></div>
+                    <span class="token-symbol">IP</span>
+                    <svg class="dropdown-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Swap details -->
+        <div class="swap-details">
+            <div class="swap-detail-item">
+                <span>Price</span>
+                <span id="swapRate">1 IP = 0.00001 IP</span>
+            </div>
+            <div class="swap-detail-item">
+                <span>Gas Fee</span>
+                <span id="gasFee">~0.0001 IP</span>
+            </div>
+            <div class="swap-detail-item">
+                <span>Slippage Tolerance</span>
+                <span>0.5%</span>
+            </div>
+        </div>
+        
+        <!-- Swap button -->
+        <button id="swapButton" class="swap-button" disabled>Swap</button>
+        
+    </div>
+</div>

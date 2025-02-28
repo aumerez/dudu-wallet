@@ -1,0 +1,46 @@
+/* Target the dynamic content area */
+#dynamicContent .swap-container {
+    padding: 15px;
+    width: auto;
+    height: auto;
+}
+
+/* Fix the swap sections */
+#dynamicContent .swap-section {
+    margin-bottom: 15px;
+    width: auto;
+}
+
+/* Fix the swap direction button */
+#dynamicContent .swap-direction-container {
+    position: relative;
+    height: 36px;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+}
+
+#dynamicContent .swap-direction-btn {
+    position: relative;
+    top: 0;
+}
+
+/* Fix the input containers */
+#dynamicContent .swap-input-container {
+    display: flex;
+    gap: 8px;
+}
+
+#dynamicContent .swap-input {
+    flex: 1;
+}
+
+#dynamicContent .token-selector {
+    min-width: 80px;
+    height: auto;
+}
+
+/* Fix the modal for token selection */
+#dynamicContent .modal {
+    z-index: 9999;
+}

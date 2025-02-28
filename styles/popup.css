@@ -1,0 +1,293 @@
+/* popup.css */
+/* Table styles */
+.wallet-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-bottom: 20px;
+  background: #2d2d2d;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.wallet-table th,
+.wallet-table td {
+  padding: 12px;
+  text-align: left;
+  color: #ffffff;
+}
+
+.wallet-table th {
+    background: #1a1a1a;
+    font-weight: 500;
+    font-size: 14px;
+    border-bottom: 1px solid #404040;
+}
+
+.wallet-info {
+  width: 50%;
+}
+
+.wallet-name {
+  font-size: 14px;
+  margin-bottom: 6px;
+  color: #ffffff;
+}
+
+.wallet-address {
+    font-family: monospace;
+    font-size: 12px;
+    color: #b0b0b0;
+    word-break: break-all;
+}
+
+.wallet-address-container {
+  font-family: monospace;
+  font-size: 14px;
+  color: #b0b0b0;
+  background: #1a1a1a;
+  padding: 8px 12px;
+  border-radius: 6px;
+  display: inline-block;
+  letter-spacing: 0.5px;
+}
+
+.balance-cell {
+  width: 30%;
+  text-align: right !important;
+  padding-right: 16px !important;
+  font-family: monospace;
+  font-size: 14px;
+}
+
+.actions-cell {
+  width: 20%;
+  text-align: right;
+}
+
+.copy-btn {
+  padding: 6px 12px;
+  font-size: 12px;
+  background-color: #404040;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.copy-btn:hover {
+    background-color: #505050;
+}
+
+/* Create Another Wallet button */
+#createAnotherWallet {
+    width: 100%;
+    margin-top: 16px;
+    padding: 12px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+#createAnotherWallet:hover {
+    background-color: #45a049;
+}
+
+/* Add to your existing popup.css */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+#backButton {
+  padding: 8px 16px;
+  font-size: 14px;
+  background-color: #404040;
+}
+
+.wallet-summary {
+  background: #2d2d2d;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+}
+
+.balance-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.balance-item {
+  background: #2d2d2d;
+  padding: 16px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.balance-item h3 {
+  font-size: 14px;
+  margin: 0 0 8px 0;
+  color: #b0b0b0;
+}
+
+.balance-amount {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+/* Wallet options styling */
+.wallet-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.option-btn {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: #2d2d2d;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+}
+
+.option-btn:hover {
+  background: #404040;
+}
+
+.option-icon {
+  font-size: 24px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #404040;
+  border-radius: 8px;
+}
+
+.option-content {
+  flex: 1;
+}
+
+.option-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: #ffffff;
+  margin-bottom: 4px;
+}
+
+.option-description {
+  font-size: 12px;
+  color: #b0b0b0;
+}
+
+/* Import screen styling */
+.input-group {
+  position: relative;
+}
+
+.toggle-visibility {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #b0b0b0;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
+.secondary-btn {
+  background: #2d2d2d;  
+  border: 1px solid #404040;
+  margin-top: 12px;
+  color: #ffffff;
+}
+
+.secondary-btn:hover {
+  background: #404040;
+}
+
+/* Add these styles to your popup.css file */
+
+/* Tab Navigation Styles */
+.tab-navigation {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  background-color: #1a1a1a;
+  border-top: 1px solid #404040;
+  height: 56px;
+}
+
+.tab-button {
+  flex: 1;
+  padding: 8px;
+  background: transparent;
+  color: #b0b0b0;
+  border: none;
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  transition: all 0.2s ease;
+}
+
+.tab-button.active {
+  color: #4CAF50;
+  background-color: rgba(76, 175, 80, 0.1);
+}
+
+.tab-icon {
+  margin-bottom: 2px;
+}
+
+.content-container {
+  margin-bottom: 60px; /* Space for tab navigation */
+  padding-bottom: 10px;
+}
+
+/* Make sure the active tab is highlighted properly */
+#walletsTab.active .tab-icon,
+#trendsTab.active .tab-icon {
+  stroke: #4CAF50;
+}
+
+#walletsTab:not(.active) .tab-icon,
+#trendsTab:not(.active) .tab-icon {
+  stroke: #b0b0b0;
+}
+
+#swapScreen {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+#swapFrame {
+  display: block;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
