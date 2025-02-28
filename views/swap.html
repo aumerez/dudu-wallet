@@ -1,4 +1,4 @@
-<!-- views/swap.html -->
+<!-- swap.html -->
 <div class="content-main">
     <style>
         /* Critical swap-specific styles */
@@ -80,6 +80,26 @@
         
         <!-- Swap button -->
         <button id="swapButton" class="swap-button" disabled>Swap</button>
+
+        <!-- Token Selection Modal -->
+        <div id="tokenSelectModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Swap from</h2>
+                    <button id="closeModalBtn" class="close-modal">✕</button>
+                </div>
+
+                <!-- Search bar -->
+                <div class="search-container">
+                    <input type="text" id="tokenSearch" placeholder="Enter token name or paste address">
+                </div>
+
+                <!-- Token list -->
+                <div id="tokenList" class="token-list"></div>
+            </div>
+        </div>
+
+        <div id="txStatusContainer" class="tx-status-container" style="display: none;"></div>
         
     </div>
 </div>
