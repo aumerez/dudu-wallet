@@ -9,7 +9,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <button id="backButton" class="back-btn">&larr; Back</button>
+            <button id="backButton" class="back-btn"><span style="font-size: 2em;">&lt;</span> Back</button>
         </div>
         
         <div class="wallet-info-card">
@@ -22,7 +22,7 @@
         <div class="balance-card">
             <div class="balance-header">
                 <div class="balance-label">IP Balance</div>
-                <button id="transferIPButton" class="send-btn">Send</button>
+                <button id="transferIPButton" class="purple-button">Send</button>
             </div>
             <div id="storyBalance" class="balance-value">Loading...</div>
         </div>
@@ -31,14 +31,14 @@
         <div class="balance-card">
             <div class="balance-header">
                 <div class="balance-label">PIPE Token Balance</div>
-                <button id="transferPIPEButton" class="send-btn pipe-send">Send</button>
+                <button id="transferPIPEButton" class="purple-button">Send</button>
             </div>
 
             <div id="pipeBalance" class="balance-value">Loading...</div>
         </div>
 
         <div class="private-key-card">
-            <button id="showPrivateKeyBtn" class="secondary-btn">Show Private Key</button>
+            <button id="showPrivateKeyBtn" class="purple-button-large">Show Private Key</button>
             <div id="privateKeyContainer" class="private-key-container" style="display: none;">
                 <div class="private-key-label">Private Key:</div>
                 <div class="private-key-value" id="privateKeyValue"></div>
@@ -57,8 +57,8 @@
                 </div>
 
                 <div class="modal-buttons">
-                    <button id="cancelPasswordBtn" class="secondary-btn">Cancel</button>
-                    <button id="confirmPasswordBtn" class="primary-btn">Confirm</button>
+                    <button id="cancelPasswordBtn" class="purple-button">Cancel</button>
+                    <button id="confirmPasswordBtn" class="purple-button">Confirm</button>
                 </div>
             </div>
         </div>

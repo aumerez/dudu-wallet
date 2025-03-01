@@ -1,12 +1,12 @@
 /* ip.css */
 .ip-container {
-    padding: 20px;
+    padding: 1px;
     max-width: 600px;
     margin: 0 auto;
 }
 
 .ip-section {
-    margin-bottom: 20px;
+    margin-bottom: 5px;
 }
 
 .ip-info-box {
@@ -24,44 +24,50 @@
 
 .ip-actions {
     display: flex;
-    gap: 10px;
-    margin-top: 20px;
-}
-
-.ip-register-button, 
-.ip-action-button {
-    padding: 8px 16px;
-    border-radius: 4px;
-    font-weight: 600;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.2s;
+    gap: 1px;
+    margin-top: 1px;
 }
 
 .ip-register-button {
-    background-color: #3498db;
+    background-color: #774C9E;
     color: white;
+    border: none;
+    border-radius: 24px;
+    height: 40px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 6px;
+    width: 100%;
+    padding: 0 24px;
 }
 
 .ip-register-button:hover {
-    background-color: #2980b9;
+    background-color: #7c3aed;
 }
 
 .ip-action-button {
-    background-color: #ecf0f1;
-    color: #34495e;
+    background-color: #774C9E;
+    color: white;
+    border: none;
+    border-radius: 24px;
+    height: 40px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 6px;
+    width: 100%;
+    padding: 0 24px;
 }
 
 .ip-action-button:hover {
-    background-color: #bdc3c7;
+    background-color: #7c3aed;
 }
 
 .register-form {
-    margin-top: 16px;
+    margin-top: 5px;
 }
 
 .form-group {
-    margin-bottom: 16px;
+    margin-bottom: 5%;
 }
 
 .form-group label {

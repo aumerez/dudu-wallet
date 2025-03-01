@@ -28,16 +28,22 @@
 /* Fix the input containers */
 #dynamicContent .swap-input-container {
     display: flex;
+    height: 12;
     gap: 8px;
 }
 
 #dynamicContent .swap-input {
-    flex: 1;
+    flex: 6;
 }
 
 #dynamicContent .token-selector {
-    min-width: 80px;
-    height: auto;
+    min-width: 40px;
+    height: 20x;
+}
+
+.token-selector {
+    min-width: 40px;
+    height: 48x;
 }
 
 /* Fix the modal for token selection */

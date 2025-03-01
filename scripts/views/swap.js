@@ -205,8 +205,20 @@ window.SwapModule = (function() {
             }
 
             .swap-button {
-                position: relative;
-                z-index: 1; /* Ensure the swap button stays interactive */
+                background-color: #774C9E;
+                color: white;
+                border: none;
+                border-radius: 24px;
+                height: 40px;
+                font-size: 16px;
+                cursor: pointer;
+                margin-top: 6px;
+                width: 100%;
+                padding: 0 24px;
+            }
+
+            .swap-button:hover {
+                background-color: #7c3aed;
             }
 
             .modal {
@@ -223,7 +235,7 @@ window.SwapModule = (function() {
             }
 
             .modal-content {
-                background: #121212;
+                background: #F1EDF3;
                 padding: 20px;
                 border-radius: 12px;
                 width: 90%;
