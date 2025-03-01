@@ -202,16 +202,60 @@ function setupTabNavigation() {
     trendsTab.addEventListener('click', async () => {
         hideAllScreens();
         
-        // Load trends content dynamically
-        const trendsContent = await loadContent('trends');
-        contentContainer.innerHTML = trendsContent;
-        
-        // Show dynamic content container
+        // Show dynamic content screen first
         document.getElementById('dynamicContentScreen').classList.add('active');
         
-        // Initialize any trends-specific scripts
+        // Load trends content dynamically
+        await loadContent('trends');
+        
+        // Wait a moment for DOM to update
+        await new Promise(resolve => setTimeout(resolve, 300)); // Aumentado a 300ms para dar más tiempo
+        
+        // Asegurarse de que el script de trends se cargue correctamente
+        if (!window.trendsScriptLoaded) {
+            try {
+                await window.loadScript('../scripts/views/trends.js');
+                window.trendsScriptLoaded = true;
+                console.log('Trends script loaded successfully');
+            } catch (error) {
+                console.error('Error loading trends script:', error);
+            }
+        }
+        
+        // Espera un poco más antes de inicializar
+        await new Promise(resolve => setTimeout(resolve, 200));
+        
+        // Comprobar e inicializar trends
         if (window.initTrends && typeof window.initTrends === 'function') {
-            window.initTrends();
+            console.log('Calling initTrends function');
+            try {
+                window.initTrends();
+            } catch (error) {
+                console.error('Error initializing trends:', error);
+            }
+        } else {
+            console.error('initTrends function not found after loading script');
+            
+            // Alternativa: intentar inicializar manualmente si la función no está disponible
+            try {
+                console.log('Attempting manual initialization of trends');
+                const customTokensList = document.getElementById('customTokensList');
+                if (customTokensList) {
+                    // Si el elemento existe, probablemente se cargó el HTML pero no se inicializó
+                    const refreshButton = document.getElementById('refreshButton');
+                    if (refreshButton) {
+                        refreshButton.addEventListener('click', () => {
+                            const lastUpdatedTime = document.getElementById('lastUpdatedTime');
+                            if (lastUpdatedTime) {
+                                const now = new Date();
+                                lastUpdatedTime.textContent = `Last updated: ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+                            }
+                        });
+                    }
+                }
+            } catch (manualError) {
+                console.error('Manual initialization failed:', manualError);
+            }
         }
         
         // Update tabs
