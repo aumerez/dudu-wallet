@@ -51,6 +51,9 @@ window.initIP = function() {
         console.error('Documentation button not found');
     }
     
+    // Track if a transaction is in progress to prevent duplicates
+    let transactionInProgress = false;
+    
     // Register button listener
     const registerButton = document.querySelector('.ip-register-button');
     if (registerButton) {
@@ -67,7 +70,7 @@ window.initIP = function() {
             throw new Error('No wallets found');
         }
         
-        return wallets[1];
+        return wallets[1]; // Using wallet at index 1 as in your code
     }
     
     // Get the network settings
@@ -78,9 +81,80 @@ window.initIP = function() {
         };
     }
     
+    // Validate NFT before attempting registration
+    async function validateNFT(web3, tokenContract, tokenId, walletAddress) {
+        const erc721ABI = [
+            {
+                "inputs": [{"name": "tokenId", "type": "uint256"}],
+                "name": "ownerOf",
+                "outputs": [{"name": "", "type": "address"}],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [{"name": "interfaceId", "type": "bytes4"}],
+                "name": "supportsInterface",
+                "outputs": [{"name": "", "type": "bool"}],
+                "stateMutability": "view",
+                "type": "function"
+            }
+        ];
+        
+        try {
+            const nftContract = new web3.eth.Contract(erc721ABI, tokenContract);
+            
+            // Check if contract supports ERC721 interface
+            const supportsERC721 = await nftContract.methods.supportsInterface('0x80ac58cd').call();
+            if (!supportsERC721) {
+                throw new Error('Contract does not support the ERC721 standard');
+            }
+            
+            // Check if token exists and get owner
+            const tokenOwner = await nftContract.methods.ownerOf(tokenId).call();
+            console.log(`Token ${tokenId} exists. Owner: ${tokenOwner}`);
+            
+            // Check if wallet owns the token
+            if (tokenOwner.toLowerCase() !== walletAddress.toLowerCase()) {
+                throw new Error(`You don't own this NFT. Owner is ${tokenOwner}`);
+            }
+            
+            return true;
+        } catch (error) {
+            // Handle error cases
+            if (error.message.includes('nonexistent token') || 
+                error.message.includes('owner query for nonexistent token')) {
+                throw new Error(`Token ID ${tokenId} doesn't exist on the contract`);
+            }
+            throw error;
+        }
+    }
+    
+    // Check if NFT is already registered
+    async function isNFTAlreadyRegistered(web3, contractAddress, chainId, tokenContract, tokenId) {
+        try {
+            // This is a placeholder - the actual implementation depends on Story Protocol's API
+            // You would need to call a view function on the contract to check if an NFT is registered
+            // For example, something like:
+            // const result = await registryContract.methods.isRegistered(chainId, tokenContract, tokenId).call();
+            // return result;
+            
+            // For now, returning false (not registered) to allow registration attempts
+            return false;
+        } catch (error) {
+            console.warn('Error checking if NFT is registered:', error);
+            return false;
+        }
+    }
+    
     // Handler function for the register button click
     async function handleRegisterClick() {
         console.log('Register button clicked');
+        
+        // Prevent multiple clicks
+        if (transactionInProgress) {
+            updateStatus('Transaction already in progress. Please wait...', 'info');
+            return;
+        }
         
         const tokenContract = document.getElementById('tokenContract').value;
         const tokenId = document.getElementById('tokenId').value;
@@ -104,6 +178,7 @@ window.initIP = function() {
         }
         
         try {
+            transactionInProgress = true;
             updateStatus('Preparing transaction...', 'info');
             
             // Get wallet and network settings
@@ -123,10 +198,35 @@ window.initIP = function() {
             web3.eth.accounts.wallet.add(account);
             web3.eth.defaultAccount = account.address;
             
+            // Validate the NFT before proceeding
+            try {
+                updateStatus('Validating NFT ownership...', 'info');
+                await validateNFT(web3, tokenContract, tokenId, account.address);
+                
+                // Check if NFT is already registered
+                const isRegistered = await isNFTAlreadyRegistered(
+                    web3, contractAddress, networkInfo.chainId, tokenContract, tokenId
+                );
+                
+                if (isRegistered) {
+                    updateStatus('This NFT is already registered', 'error');
+                    transactionInProgress = false;
+                    return;
+                }
+            } catch (validationError) {
+                updateStatus(`Error: ${validationError.message}`, 'error');
+                transactionInProgress = false;
+                return;
+            }
+            
             // Create contract instance
             const contract = new web3.eth.Contract(ipAssetRegistryABI, contractAddress);
             
             updateStatus('Sending transaction...', 'info');
+            
+            // Get current nonce to avoid "already known" error
+            const nonce = await web3.eth.getTransactionCount(account.address, 'pending');
+            console.log(`Using nonce: ${nonce}`);
             
             // Try to estimate gas, but use fallback if it fails
             let gasEstimate;
@@ -151,7 +251,8 @@ window.initIP = function() {
             ).send({
                 from: account.address,
                 gas: Math.ceil(gasEstimate * 1.2), // Add 20% buffer to gas estimate
-                gasPrice: await web3.eth.getGasPrice()
+                gasPrice: await web3.eth.getGasPrice(),
+                nonce: nonce // Add explicit nonce
             });
             
             console.log('Transaction successful:', result);
@@ -164,6 +265,8 @@ window.initIP = function() {
         } catch (error) {
             console.error('Registration error:', error);
             updateStatus(`Error: ${error.message || 'Transaction failed'}`, 'error');
+        } finally {
+            transactionInProgress = false;
         }
     }
     
