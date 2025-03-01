@@ -1,0 +1,115 @@
+/* loan.css */
+.ip-container {
+    padding: 1px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.ip-section {
+    margin-bottom: 5px;
+}
+
+.ip-info-box {
+    background: #f5f7fa;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.ip-info-box h3 {
+    margin-top: 0;
+    color: #333;
+    font-size: 18px;
+}
+
+.ip-actions {
+    display: flex;
+    gap: 1px;
+    margin-top: 1px;
+}
+
+.ip-action-button {
+    background-color: #774C9E;
+    color: white;
+    border: none;
+    border-radius: 24px;
+    height: 40px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 6px;
+    width: 100%;
+    padding: 0 24px;
+}
+
+.ip-action-button:hover {
+    background-color: #7c3aed;
+}
+
+.ip-action-button:disabled {
+    background-color: #9f87ba;
+    cursor: not-allowed;
+}
+
+.loan-form {
+    margin-top: 5px;
+}
+
+.form-group {
+    margin-bottom: 5%;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+    color: #555;
+}
+
+.form-control {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.form-text {
+    font-size: 12px;
+    color: #7f8c8d;
+    margin-top: 4px;
+}
+
+.pipe-amount {
+    font-size: 18px;
+    font-weight: 600;
+    color: #774C9E;
+    background: #f0eaf5;
+    padding: 8px 12px;
+    border-radius: 4px;
+    margin: 5px 0;
+}
+
+.ip-status {
+    margin-top: 16px;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+#loan-status-message {
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+#loan-status-message.success {
+    color: #27ae60;
+}
+
+#loan-status-message.error {
+    color: #e74c3c;
+}
+
+#loan-transaction-hash {
+    font-size: 12px;
+    word-break: break-all;
+    margin-top: 5px;
+}
