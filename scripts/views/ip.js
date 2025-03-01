@@ -45,7 +45,7 @@ window.initIP = function() {
     if (docButton) {
         docButton.addEventListener('click', () => {
             console.log('Opening documentation');
-            window.open('https://docs.story.foundation', '_blank');
+            chrome.tabs.create({ url: 'https://docs.story.foundation' });
         });
     } else {
         console.error('Documentation button not found');
@@ -54,65 +54,117 @@ window.initIP = function() {
     // Register button listener
     const registerButton = document.querySelector('.ip-register-button');
     if (registerButton) {
-        registerButton.addEventListener('click', async () => {
-            const tokenContract = document.getElementById('tokenContract').value;
-            const tokenId = document.getElementById('tokenId').value;
-            
-            // Validate inputs
-            if (!tokenContract || !tokenId) {
-                updateStatus('Please provide both contract address and token ID', 'error');
-                return;
-            }
-            
-            if (!window.ethereum) {
-                updateStatus('MetaMask or compatible wallet not detected', 'error');
-                return;
-            }
-            
-            try {
-                // Get current chain ID from the connected provider
-                const chainId = await window.ethereum.request({ method: 'eth_chainId' });
-                const decimalChainId = parseInt(chainId, 16);
-                
-                // Request account access
-                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                const userAccount = accounts[0];
-                
-                // Create Web3 instance and contract instance
-                const web3 = new Web3(window.ethereum);
-                const ipAssetRegistry = new web3.eth.Contract(ipAssetRegistryABI, contractAddress);
-                
-                updateStatus('Processing transaction...', 'info');
-                
-                // Call the register function
-                const tx = await ipAssetRegistry.methods.register(
-                    decimalChainId, 
-                    tokenContract, 
-                    tokenId
-                ).send({ from: userAccount });
-                
-                // Update status with success message and transaction hash
-                updateStatus('Registration successful!', 'success');
-                document.getElementById('ip-transaction-hash').innerHTML = 
-                    `Transaction hash: <a href="https://etherscan.io/tx/${tx.transactionHash}" target="_blank">${tx.transactionHash}</a>`;
-                
-                // Get the returned IP ID (address)
-                if (tx.events && tx.events.IPRegistered) {
-                    const ipId = tx.events.IPRegistered.returnValues.id;
-                    document.getElementById('ip-transaction-hash').innerHTML += 
-                        `<br>IP Asset ID: <a href="https://etherscan.io/address/${ipId}" target="_blank">${ipId}</a>`;
-                }
-                
-            } catch (error) {
-                console.error('Registration error:', error);
-                updateStatus(
-                    `Error: ${error.message || 'Transaction failed'}`, 
-                    'error'
-                );
-            }
-        });
+        registerButton.addEventListener('click', handleRegisterClick);
     } else {
         console.error('Register button not found');
+    }
+    
+    // Gets the first wallet from local storage
+    async function getFirstWallet() {
+        const { wallets } = await chrome.storage.local.get('wallets');
+        
+        if (!wallets || wallets.length === 0) {
+            throw new Error('No wallets found');
+        }
+        
+        return wallets[1];
+    }
+    
+    // Get the network settings
+    function getNetworkSettings() {
+        return {
+            chainId: 1315,  // Fixed network ID
+            rpcUrl: 'https://aeneid.storyrpc.io/'  // Fixed RPC URL
+        };
+    }
+    
+    // Handler function for the register button click
+    async function handleRegisterClick() {
+        console.log('Register button clicked');
+        
+        const tokenContract = document.getElementById('tokenContract').value;
+        const tokenId = document.getElementById('tokenId').value;
+        
+        // Validate inputs
+        if (!tokenContract || !tokenId) {
+            updateStatus('Please provide both contract address and token ID', 'error');
+            return;
+        }
+        
+        // Validate contract address format
+        if (!tokenContract.startsWith('0x') || tokenContract.length !== 42) {
+            updateStatus('Invalid contract address format', 'error');
+            return;
+        }
+        
+        // Validate token ID is a number
+        if (isNaN(tokenId)) {
+            updateStatus('Token ID must be a number', 'error');
+            return;
+        }
+        
+        try {
+            updateStatus('Preparing transaction...', 'info');
+            
+            // Get wallet and network settings
+            const wallet = await getFirstWallet();
+            const networkInfo = getNetworkSettings();
+            
+            console.log(`Using wallet address ${wallet.address} on chain ${networkInfo.chainId}`);
+            
+            // Create web3 instance with the RPC URL
+            const web3 = new Web3(networkInfo.rpcUrl);
+            
+            // Get the private key from the wallet using CryptoUtils
+            const privateKey = await CryptoUtils.getDecryptedPrivateKey(wallet);
+            
+            // Add wallet private key to web3
+            const account = web3.eth.accounts.privateKeyToAccount(privateKey);
+            web3.eth.accounts.wallet.add(account);
+            web3.eth.defaultAccount = account.address;
+            
+            // Create contract instance
+            const contract = new web3.eth.Contract(ipAssetRegistryABI, contractAddress);
+            
+            updateStatus('Sending transaction...', 'info');
+            
+            // Try to estimate gas, but use fallback if it fails
+            let gasEstimate;
+            try {
+                gasEstimate = await contract.methods.register(
+                    networkInfo.chainId,
+                    tokenContract,
+                    tokenId
+                ).estimateGas({ from: account.address });
+                console.log('Gas estimate:', gasEstimate);
+            } catch (error) {
+                console.warn('Gas estimation failed:', error);
+                gasEstimate = 300000; // Fallback gas limit
+                console.log('Using fallback gas limit:', gasEstimate);
+            }
+            
+            // Send transaction
+            const result = await contract.methods.register(
+                networkInfo.chainId,
+                tokenContract,
+                tokenId
+            ).send({
+                from: account.address,
+                gas: Math.ceil(gasEstimate * 1.2), // Add 20% buffer to gas estimate
+                gasPrice: await web3.eth.getGasPrice()
+            });
+            
+            console.log('Transaction successful:', result);
+            
+            // Update UI with success
+            updateStatus('Registration successful!', 'success');
+            document.getElementById('ip-transaction-hash').innerHTML = 
+                `Transaction hash: <a href="https://etherscan.io/tx/${result.transactionHash}" target="_blank">${result.transactionHash}</a>`;
+            
+        } catch (error) {
+            console.error('Registration error:', error);
+            updateStatus(`Error: ${error.message || 'Transaction failed'}`, 'error');
+        }
     }
     
     // Helper function to update status message
@@ -132,29 +184,17 @@ window.initIP = function() {
         }
     }
     
-    // Check if the wallet is connected and show the current account
-    async function checkWalletConnection() {
-        if (window.ethereum) {
-            try {
-                const accounts = await window.ethereum.request({ method: 'eth_accounts' });
-                if (accounts.length > 0) {
-                    const statusElement = document.getElementById('ip-status-message');
-                    if (statusElement) {
-                        statusElement.textContent = `Connected: ${accounts[0].substring(0, 6)}...${accounts[0].substring(38)}`;
-                        statusElement.className = 'success';
-                    }
-                }
-            } catch (error) {
-                console.error('Error checking wallet connection:', error);
+    // Display the first wallet address
+    getFirstWallet()
+        .then(wallet => {
+            const statusElement = document.getElementById('ip-status-message');
+            if (statusElement && wallet.address) {
+                statusElement.textContent = `Wallet: ${wallet.address.substring(0, 6)}...${wallet.address.substring(38)}`;
+                statusElement.className = 'success';
             }
-        }
-    }
-    
-    // Initialize wallet connection check
-    checkWalletConnection();
-    
-    // Listen for account changes
-    if (window.ethereum) {
-        window.ethereum.on('accountsChanged', checkWalletConnection);
-    }
+        })
+        .catch(error => {
+            console.error('Error getting wallet:', error);
+            updateStatus('No wallets found. Please create or import a wallet.', 'error');
+        });
 };
