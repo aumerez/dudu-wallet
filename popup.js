@@ -156,6 +156,7 @@ function setupTabNavigation() {
     const trendsTab = document.getElementById('trendsTab');
     const ipTab = document.getElementById('ipTab');
     const swapTab = document.getElementById('swapTab');
+    const loanTab = document.getElementById('loanTab');
     const contentContainer = document.getElementById('dynamicContent');
     
     // Only show tab navigation after password setup and when wallets exist
@@ -176,6 +177,7 @@ function setupTabNavigation() {
         trendsTab.classList.remove('active');
         ipTab.classList.remove('active');
         swapTab.classList.remove('active');
+        loanTab.classList.remove('active');
     };
     
     // Function to hide all screens
@@ -220,7 +222,6 @@ function setupTabNavigation() {
     });
     
     // Switch to swap screen
-    // Switch to swap screen
     swapTab.addEventListener('click', async () => {
         hideAllScreens();
         
@@ -264,6 +265,42 @@ function setupTabNavigation() {
         // Update tabs
         deactivateAllTabs();
         swapTab.classList.add('active');
+    });
+
+    loanTab.addEventListener('click', async () => {
+        hideAllScreens();
+        
+        // Show dynamic content screen first
+        document.getElementById('dynamicContentScreen').classList.add('active');
+
+        // Load loan content
+        const contentLoaded = await loadContent('loan');
+
+        // Wait for a moment to ensure DOM is updated
+        await new Promise(resolve => setTimeout(resolve, 100));
+
+        // Load and initialize the script
+        if (!window.loanModule) {
+            return new Promise((resolve) => {
+                const script = document.createElement('script');
+                script.src = '../scripts/views/loan.js';
+                script.onload = function() {
+                    if (window.initLoan && typeof window.initLoan === 'function') {
+                        window.initLoan();
+                        resolve();
+                    }
+                };
+                document.body.appendChild(script);
+            });
+        } else {
+            if (window.initLoan && typeof window.initLoan === 'function') {
+                window.initLoan();
+            }
+        }
+
+        // Update tabs
+        deactivateAllTabs();
+        loanTab.classList.add('active');
     });
 
     // Switch to IP screen

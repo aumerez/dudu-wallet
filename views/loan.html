@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="../styles/loan.css">
+</head>
+
+<div class="content-main">
+    <div class="ip-container">
+        <h2>IP Collateralized Loan</h2>
+        
+        <div class="ip-section">
+            <div class="ip-info-box">
+                <h3>Supply IP for PIPE Tokens</h3>
+                <p>Supply your IP tokens as collateral to receive PIPE tokens at a 40% collateral ratio</p>
+                
+                <div class="loan-form">
+                    <div class="form-group">
+                        <label for="ipAmount">IP Token Amount</label>
+                        <input type="number" id="ipAmount" placeholder="Enter amount" class="form-control">
+                        <small class="form-text">Amount of IP tokens to supply as collateral</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>PIPE Tokens to Receive</label>
+                        <div id="pipeAmount" class="pipe-amount">0</div>
+                        <small class="form-text">You will receive 60% of your IP value in PIPE tokens (1 PIPE = 0.00001 IP)</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="ip-status">
+            <div id="loan-status-message"></div>
+            <div id="loan-transaction-hash"></div>
+        </div>
+        
+        <div class="ip-actions">
+            <button id="confirm-loan-button" class="ip-action-button">Confirm Loan</button>
+        </div>
+    </div>
+</div>
+
+<script src="../scripts/views/loan.js"></script>
+</html>
