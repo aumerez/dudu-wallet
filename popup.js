@@ -267,6 +267,7 @@ function setupTabNavigation() {
     });
 
     // Switch to IP screen
+    // Switch to IP screen
     ipTab.addEventListener('click', async () => {
         hideAllScreens();
         
@@ -277,12 +278,19 @@ function setupTabNavigation() {
         await loadContent('ip');
         
         // Wait a moment for DOM to update
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise(resolve => setTimeout(resolve, 300)); 
         
         // Check if IP script is already loaded
         if (!window.ipScriptLoaded) {
             await window.loadScript('../scripts/views/ip.js');
             window.ipScriptLoaded = true;
+            
+            await new Promise(resolve => setTimeout(resolve, 2000));
+        }
+        
+        if (!window.initIP || typeof window.initIP !== 'function') {
+            console.warn('initIP not found immediately, waiting a bit longer...');
+            await new Promise(resolve => setTimeout(resolve, 2000));
         }
         
         // Initialize IP-specific scripts
@@ -290,6 +298,20 @@ function setupTabNavigation() {
             window.initIP();
         } else {
             console.error('initIP function not found after loading script');
+
+            try {
+                const response = await fetch('../scripts/views/ip.js');
+                const scriptContent = await response.text();
+                eval(scriptContent); 
+                
+                if (window.initIP && typeof window.initIP === 'function') {
+                    window.initIP();
+                } else {
+                    throw new Error('Still unable to find initIP function');
+                }
+            } catch (error) {
+                console.error('Failed to initialize IP view:', error);
+            }
         }
         
         // Update tabs
@@ -662,13 +684,23 @@ document.addEventListener('DOMContentLoaded', async () => {
    }
    
    // Load scripts dynamically when needed
-   window.loadScript = function(scriptPath) {
-       return new Promise((resolve, reject) => {
-           const script = document.createElement('script');
-           script.src = scriptPath;
-           script.onload = () => resolve();
-           script.onerror = () => reject(new Error(`Failed to load script: ${scriptPath}`));
-           document.body.appendChild(script);
-       });
-   };
+    window.loadScript = function(scriptPath) {
+        return new Promise((resolve, reject) => {
+            const script = document.createElement('script');
+            script.src = scriptPath;
+            script.async = false; 
+            
+            script.onload = () => {
+                console.log(`Script loaded successfully: ${scriptPath}`);
+                resolve();
+            };
+            
+            script.onerror = (error) => {
+                console.error(`Failed to load script: ${scriptPath}`, error);
+                reject(new Error(`Failed to load script: ${scriptPath}`));
+            };
+            
+            document.body.appendChild(script);
+        });
+    };
 });

@@ -33,17 +33,6 @@
             border: 1px solid #ccc;
             border-radius: 4px;
         }
-        button {
-            padding: 10px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
         .error {
             color: red;
             font-size: 12px;
@@ -90,42 +79,58 @@
 </head>
 <body>
     <div class="content-container">
+        <!-- Logo header using image -->
+        <div class="dudu-logo-container">
+            <img src="../assets/images/dudu-logo.png" alt="DUDU Logo" class="dudu-logo-image">
+        </div>
         <div class="container">
             <!-- Password Setup Screen -->
             <div id="setupScreen" class="screen">
-                <h2>Set Up Your Password</h2>
-                <div class="input-group">
-                    <label for="password">Create Password</label>
-                    <input type="password" id="password" placeholder="Enter password">
+                <div class="container">
+                    
+                    <h2 class="setup-title">Create password</h2>
+                    
+                    <div class="input-group">
+                        <label for="password">New password (8 characters min)</label>
+                        <input type="password" id="password" placeholder="" class="password-input">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="confirmPassword">Confirm password</label>
+                        <input type="password" id="confirmPassword" placeholder="" class="password-input">
+                        <span id="passwordError" class="error">Passwords do not match</span>
+                    </div>
+                    
+                    <button id="confirmPasswordBtn" class="purple-button">Create</button>
                 </div>
-                <div class="input-group">
-                    <label for="confirmPassword">Confirm Password</label>
-                    <input type="password" id="confirmPassword" placeholder="Confirm password">
-                    <span id="passwordError" class="error">Passwords do not match</span>
-                </div>
-                <button id="confirmPasswordBtn">OK</button>
             </div>
 
             <!-- Create Wallet Screen -->
             <div id="createWalletScreen" class="screen">
-                <h2>Add New Wallet</h2>
+                <div class="container">
+                    <h2>Add New Wallet</h2>
+                    
+                    <div class="wallet-options">
+                        <button id="createNewWallet" class="option-btn">
+                            <div class="option-icon">
+                                <img src="../assets/images/plus-icon.png" alt="Create" class="icon-image">
+                            </div>
+                            <div class="option-content">
+                                <div class="option-title">Create wallet</div>
+                                <div class="option-description">Generate a new wallet with a recovery phrase</div>
+                            </div>
+                        </button>
                 
-                <div class="wallet-options">
-                    <button id="createNewWallet" class="option-btn">
-                        <div class="option-icon">+</div>
-                        <div class="option-content">
-                            <div class="option-title">Create New Wallet</div>
-                            <div class="option-description">Generate a new wallet with a recovery phrase</div>
-                        </div>
-                    </button>
-            
-                    <button id="importWallet" class="option-btn">
-                        <div class="option-icon">I</div>
-                        <div class="option-content">
-                            <div class="option-title">Import Existing Wallet</div>
-                            <div class="option-description">Import using private key</div>
-                        </div>
-                    </button>
+                        <button id="importWallet" class="option-btn">
+                            <div class="option-icon">
+                                <img src="../assets/images/download-icon.png" alt="Import" class="icon-image">
+                            </div>
+                            <div class="option-content">
+                                <div class="option-title" >Import wallet</div>
+                                <div class="option-description">Import existing wallet using private keys</div>
+                            </div>
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -136,8 +141,8 @@
                     <label for="walletName">Wallet Name (optional)</label>
                     <input type="text" id="walletName" placeholder="My Wallet">
                 </div>
-                <button id="confirmWalletName">Continue</button>
-                <button id="backToOptions" class="secondary-btn">Back</button>
+                <button id="confirmWalletName" class="purple-button">Continue</button>
+                <button id="backToOptions" class="purple-button">Back</button>
             </div>
 
             <!-- Import Screen -->
@@ -153,17 +158,17 @@
                     <button id="togglePrivateKey" class="toggle-visibility" type="button">Show</button>
                 </div>
                 <div id="importError" class="error"></div>
-                <button id="confirmImport">Import Wallet</button>
-                <button id="backToImportOptions" class="secondary-btn">Back</button>
+                <button id="confirmImport" class="purple-button">Import Wallet</button>
+                <button id="backToImportOptions" class="purple-button">Back</button>
             </div>
 
             <!-- Mnemonic Display Screen -->
             <div id="mnemonicScreen" class="screen">
-                <h2>Backup Your Wallet</h2>
+                <h2>Secret Recovery Phrase</h2>
                 <p>Write down these 12 words in order. You'll need them to recover your wallet.</p>
                 <div id="wordGrid"></div>
-                <p>Warning: Never share these words with anyone!</p>
-                <button id="mnemonicConfirm">I've written them down</button>
+                <p style="text-align: center;">Warning: Never share these words with anyone!</p>
+                <button id="mnemonicConfirm" class="purple-button-large">I've written them down</button>
             </div>
 
             <!-- Verification Screen -->
@@ -171,24 +176,17 @@
                 <h2>Verify Your Backup</h2>
                 <p>Please enter the requested words to verify you've saved them.</p>
                 <div id="verificationInputs"></div>
-                <button id="verifyWords">Verify</button>
+                <button id="verifyWords" class="purple-button">Verify</button>
             </div>
 
             <!-- Wallets Screen -->
             <div id="walletsScreen" class="screen">
                 <h2>Your Wallets</h2>
                 <table class="wallet-table">
-                    <thead>
-                        <tr>
-                            <th>Address</th>
-                            <th>Balance</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
                     <tbody id="walletsTableBody">
                     </tbody>
                 </table>
-                <button id="createAnotherWallet">Create Another Wallet</button>
+                <button id="createAnotherWallet" class="purple-button-large">Create Another Wallet</button>
             </div>
             
             <!-- Dynamic Content Screen (Replaces iframes) -->

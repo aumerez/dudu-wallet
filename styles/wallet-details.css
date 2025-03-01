@@ -3,9 +3,9 @@ body {
     width: 350px;
     min-height: 400px;
     padding: 20px;
-    background-color: #1a1a1a;
-    color: #ffffff;
-    margin: 0;
+    background-color: #F1EDF3; /* Dark background */
+    color: #1a1a1a;
+    margin: 10;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
@@ -17,14 +17,14 @@ body {
 
 /* Header and back button */
 .header {
-    margin-bottom: 8px;
+    margin-bottom: 16px;
 }
 
 .back-btn {
-    background-color: #2d2d2d;
-    color: #ffffff;
+    background-color: #2d2d2d00;
+    color: #774C9E;
     padding: 8px 16px;
-    font-size: 14px;
+    font-size: 36px;
     border: none;
     border-radius: 8px;
     cursor: pointer;
@@ -40,7 +40,7 @@ body {
 
 /* Wallet info card */
 .wallet-info-card {
-    background: #2d2d2d;
+    background: #F1EDF3;
     padding: 16px;
     border-radius: 8px;
     margin-bottom: 8px;
@@ -48,13 +48,13 @@ body {
 
 .wallet-name {
     font-size: 18px;
-    color: #ffffff;
+    color: #1a1a1a;
     margin-bottom: 12px;
     font-weight: 500;
 }
 
 .wallet-address-container {
-    background: #1a1a1a;
+    background: #ffffff;
     padding: 12px;
     border-radius: 6px;
 }
@@ -62,14 +62,133 @@ body {
 .wallet-address {
     font-family: monospace;
     font-size: 14px;
-    color: #b0b0b0;
+    color: #1a1a1a;
     word-break: break-all;
     line-height: 1.4;
 }
 
+/* Wallet Selector Styles */
+.wallet-selector-container {
+    margin-bottom: 16px;
+}
+
+.wallet-selector {
+    width: 100%;
+    height: 48px;
+    border-radius: 8px;
+    border: 1px solid #e5e5e5;
+    background-color: white;
+    padding: 0 16px;
+    font-size: 16px;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    background-size: 16px;
+}
+
+.wallet-selector:hover {
+    border-color: #774C9E;
+}
+
+.wallet-selector:focus {
+    border-color: #774C9E;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(119, 76, 158, 0.3);
+}
+
+/* Tokens Section */
+.tokens-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 16px 0;
+    color: #1a1a1a;
+}
+
+.tokens-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.token-card {
+    background: white;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.token-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.token-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: white;
+}
+
+.ip-icon {
+    background-color: #4b6cff;
+}
+
+.ip-icon:before {
+    content: "IP";
+}
+
+.pipe-icon {
+    background-color: #774C9E;
+}
+
+.pipe-icon:before {
+    content: "P";
+}
+
+.token-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.token-name {
+    font-size: 16px;
+    font-weight: 500;
+    color: #1a1a1a;
+}
+
+.token-balance {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+}
+
+.token-send-btn {
+    background-color: #774C9E;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 16px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.token-send-btn:hover {
+    background-color: #663d8a;
+}
+
 /* Balance card */
 .balance-card {
-    background: #2d2d2d;
+    background: #ffffff;
     padding: 16px;
     border-radius: 8px;
     margin-bottom: 12px;
@@ -85,13 +204,13 @@ body {
 
 .balance-label {
     font-size: 14px;
-    color: #b0b0b0;
+    color: #1a1a1a;
 }
 
 .balance-value {
     font-size: 18px;
     font-weight: 500;
-    color: #ffffff;
+    color: #1a1a1a;
     word-break: break-all;
 }
 
@@ -113,15 +232,15 @@ body {
 
 /* PIPE send button style */
 .pipe-send {
-    background-color: #7848F4;
+    background-color: #8b5cf6; /* Update to match your purple theme */
 }
 
 .pipe-send:hover {
-    background-color: #6837D9;
+    background-color: #7c3aed;
 }
 
 .private-key-card {
-    background: #2d2d2d;
+    background: #F1EDF3;
     padding: 16px;
     border-radius: 8px;
     margin-top: 8px;
@@ -167,7 +286,7 @@ body {
     border-radius: 4px;
 }
 
-.copy-btn {
+/* .copy-btn {
     background-color: #404040;
     color: #ffffff;
     padding: 6px 12px;
@@ -180,7 +299,32 @@ body {
 
 .copy-btn:hover {
     background-color: #505050;
+} */
+
+.copy-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    transition: all 0.2s;
 }
+
+.copy-btn:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.copy-btn svg,
+.copy-btn i,
+.copy-btn img {
+    width: 16px;
+    height: 16px;
+    /* Para mantener el color actual en SVGs si usas la opción 3 */
+    color: currentColor;
+}
+
 
 .modal {
     position: fixed;
