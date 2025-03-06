@@ -47,6 +47,34 @@ async function loadContent(viewName) {
     }
 }
 
+// Sample code to add to popup.js if needed
+async function loadWalletSetup() {
+    // Hide all screens
+    document.querySelectorAll('.screen').forEach(screen => screen.classList.remove('active'));
+    
+    // Show dynamic content screen
+    document.getElementById('dynamicContentScreen').classList.add('active');
+    
+    // Load wallet setup content
+    await loadContent('wallet-setup');
+    
+    // Ensure wallet setup script is loaded
+    if (!window.walletSetupScriptLoaded) {
+        try {
+            await window.loadScript('../scripts/views/wallet-setup.js');
+            window.walletSetupScriptLoaded = true;
+            console.log('Wallet setup script loaded successfully');
+        } catch (error) {
+            console.error('Error loading wallet setup script:', error);
+        }
+    }
+    
+    // Initialize wallet setup
+    if (window.initWalletSetup && typeof window.initWalletSetup === 'function') {
+        window.initWalletSetup();
+    }
+}
+
 // Tab Navigation Functions
 function setupTabNavigation() {
     const walletTab = document.getElementById('walletTab');
@@ -325,7 +353,6 @@ function setupTabNavigation() {
 
 // Main Event Listener
 document.addEventListener('DOMContentLoaded', async () => {
-    console.log("LOADED")
     // Initialize window variables
     window.currentMnemonic = window.currentMnemonic || null;
     window.wordsToVerify = window.wordsToVerify || null;
@@ -342,12 +369,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     const { hasPassword } = await chrome.storage.local.get('hasPassword');
     const { wallets = [] } = await chrome.storage.local.get('wallets');
     
-    window.ACTIVE_WALLET = wallets[0]["address"];
-
     // Show appropriate initial screen
-    if (!hasPassword) {
-        setupScreen.classList.add('active');
-    } else if (wallets.length > 0) {
+    if (!hasPassword || wallets.length === 0) {
+        // Load wallet setup if password is not set or no wallets exist
+        await loadWalletSetup();
+    } else {
+        window.ACTIVE_WALLET = wallets[0]["address"];
         dynamicContentScreen.classList.add('active');
         
         // Load wallet content at startup
@@ -366,9 +393,5 @@ document.addEventListener('DOMContentLoaded', async () => {
     
         // Initialize tab navigation
         setupTabNavigation();
-    }else {
-        createWalletScreen.classList.add('active');
     }
-   
-   
 });

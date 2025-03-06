@@ -1,243 +1,96 @@
-<!-- Popup.html -->
-<!DOCTYPE html>
-<html>
-<head>
-    <link rel="stylesheet" href="../styles/popup.css">
-    <link rel="stylesheet" href="../styles/swap.css">
-    <title>Simple Crypto Wallet</title>
-    <style>
-        body {
-            width: 300px;
-            padding: 20px;
-            font-family: Arial, sans-serif;
-        }
-        .container {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .screen {
-            display: none !important;
-        }
-        .screen.active {
-            display: block !important;
-        }
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            margin-bottom: 10px;
-        }
-        input {
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        .error {
-            color: red;
-            font-size: 12px;
-            display: none;
-        }
-        
-        /* Tab Navigation Styles */
-        .tab-navigation {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            display: flex;
-            background-color: #1a1a1a;
-            border-top: 1px solid #404040;
-        }
-        
-        .tab-button {
-            flex: 1;
-            padding: 12px 8px;
-            background: transparent;
-            color: #b0b0b0;
-            border: none;
-            font-size: 12px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-        }
-        
-        .tab-button.active {
-            color: #4CAF50;
-            border-top: 2px solid #4CAF50;
-        }
-        
-        .tab-icon {
-            font-size: 16px;
-        }
-        
-        .content-container {
-            margin-bottom: 60px; /* Space for tab navigation */
-        }
-    </style>
-</head>
-<body>
-    <div class="content-container">
-        <!-- Logo header using image -->
-        <div class="dudu-logo-container">
-            <img src="../assets/images/dudu-logo.png" alt="DUDU Logo" class="dudu-logo-image">
-        </div>
+<!-- setup.html -->
+<div class="wallet-setup-container">
+    <!-- Password Setup Screen -->
+    <div id="setupScreen" class="screen">
         <div class="container">
-            <!-- Password Setup Screen -->
-            <div id="setupScreen" class="screen">
-                <div class="container">
-                    
-                    <h2 class="setup-title">Create password</h2>
-                    
-                    <div class="input-group">
-                        <label for="password">New password (8 characters min)</label>
-                        <input type="password" id="password" placeholder="" class="password-input">
-                    </div>
-                    
-                    <div class="input-group">
-                        <label for="confirmPassword">Confirm password</label>
-                        <input type="password" id="confirmPassword" placeholder="" class="password-input">
-                        <span id="passwordError" class="error">Passwords do not match</span>
-                    </div>
-                    
-                    <button id="confirmPasswordBtn" class="purple-button">Create</button>
-                </div>
-            </div>
-
-            <!-- Create Wallet Screen -->
-            <div id="createWalletScreen" class="screen">
-                <div class="container">
-                    <h2>Add New Wallet</h2>
-                    
-                    <div class="wallet-options">
-                        <button id="createNewWallet" class="option-btn">
-                            <div class="option-icon">
-                                <img src="../assets/images/plus-icon.png" alt="Create" class="icon-image">
-                            </div>
-                            <div class="option-content">
-                                <div class="option-title">Create wallet</div>
-                                <div class="option-description">Generate a new wallet with a recovery phrase</div>
-                            </div>
-                        </button>
-                
-                        <button id="importWallet" class="option-btn">
-                            <div class="option-icon">
-                                <img src="../assets/images/download-icon.png" alt="Import" class="icon-image">
-                            </div>
-                            <div class="option-content">
-                                <div class="option-title" >Import wallet</div>
-                                <div class="option-description">Import existing wallet using private keys</div>
-                            </div>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Create Wallet Name Screen -->
-            <div id="createWalletNameScreen" class="screen">
-                <h2>Create New Wallet</h2>
-                <div class="input-group">
-                    <label for="walletName">Wallet Name (optional)</label>
-                    <input type="text" id="walletName" placeholder="My Wallet">
-                </div>
-                <button id="confirmWalletName" class="purple-button">Continue</button>
-                <button id="backToOptions" class="purple-button">Back</button>
-            </div>
-
-            <!-- Import Screen -->
-            <div id="importScreen" class="screen">
-                <h2>Import Wallet</h2>
-                <div class="input-group">
-                    <label for="walletName">Wallet Name (optional)</label>
-                    <input type="text" id="importWalletName" placeholder="My Imported Wallet">
-                </div>
-                <div class="input-group">
-                    <label for="privateKey">Private Key</label>
-                    <input type="password" id="privateKey" placeholder="Enter your private key">
-                    <button id="togglePrivateKey" class="toggle-visibility" type="button">Show</button>
-                </div>
-                <div id="importError" class="error"></div>
-                <button id="confirmImport" class="purple-button">Import Wallet</button>
-                <button id="backToImportOptions" class="purple-button">Back</button>
-            </div>
-
-            <!-- Mnemonic Display Screen -->
-            <div id="mnemonicScreen" class="screen">
-                <h2>Secret Recovery Phrase</h2>
-                <p>Write down these 12 words in order. You'll need them to recover your wallet.</p>
-                <div id="wordGrid"></div>
-                <p style="text-align: center;">Warning: Never share these words with anyone!</p>
-                <button id="mnemonicConfirm" class="purple-button-large">I've written them down</button>
-            </div>
-
-            <!-- Verification Screen -->
-            <div id="verificationScreen" class="screen">
-                <h2>Verify Your Backup</h2>
-                <p>Please enter the requested words to verify you've saved them.</p>
-                <div id="verificationInputs"></div>
-                <button id="verifyWords" class="purple-button">Verify</button>
-            </div>
-
-            <!-- Wallets Screen -->
-            <div id="walletsScreen" class="screen">
-                <h2>Your Wallets</h2>
-                <table class="wallet-table">
-                    <tbody id="walletsTableBody">
-                    </tbody>
-                </table>
-                <button id="createAnotherWallet" class="purple-button-large">Create Another Wallet</button>
+            <h2 class="setup-title">Create password</h2>
+            
+            <div class="input-group">
+                <label for="password">New password (8 characters min)</label>
+                <input type="password" id="password" placeholder="" class="password-input">
             </div>
             
-            <!-- Dynamic Content Screen (Replaces iframes) -->
-            <div id="dynamicContentScreen" class="screen">
-                <div id="dynamicContent"></div>
+            <div class="input-group">
+                <label for="confirmPassword">Confirm password</label>
+                <input type="password" id="confirmPassword" placeholder="" class="password-input">
+                <span id="passwordError" class="error">Passwords do not match</span>
+            </div>
+            
+            <button id="confirmPasswordBtn" class="purple-button">Create</button>
+        </div>
+    </div>
+
+    <!-- Create Wallet Screen -->
+    <div id="createWalletScreen" class="screen">
+        <div class="container">
+            <h2>Add New Wallet</h2>
+            
+            <div class="wallet-options">
+                <button id="createNewWallet" class="option-btn">
+                    <div class="option-icon">
+                        <img src="../assets/images/plus-icon.png" alt="Create" class="icon-image">
+                    </div>
+                    <div class="option-content">
+                        <div class="option-title">Create wallet</div>
+                        <div class="option-description">Generate a new wallet with a recovery phrase</div>
+                    </div>
+                </button>
+        
+                <button id="importWallet" class="option-btn">
+                    <div class="option-icon">
+                        <img src="../assets/images/download-icon.png" alt="Import" class="icon-image">
+                    </div>
+                    <div class="option-content">
+                        <div class="option-title">Import wallet</div>
+                        <div class="option-description">Import existing wallet using private keys</div>
+                    </div>
+                </button>
             </div>
         </div>
     </div>
-    
-    <!-- Tab Navigation -->
-    <div class="tab-navigation">
-        <button id="walletsTab" class="tab-button active">
-            <svg class="tab-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="2" y="6" width="20" height="12" rx="2" />
-                <path d="M22 10H2" />
-            </svg>
-            <span>Wallet</span>
-        </button>
-        <button id="trendsTab" class="tab-button">
-            <svg class="tab-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
-                <polyline points="17 6 23 6 23 12" />
-            </svg>
-            <span>Trends</span>
-        </button>
-        <button id="ipTab" class="tab-button">
-            <svg class="tab-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10" />
-                <path d="M12 8v8" />
-                <path d="M12 12h.01" />
-            </svg>
-            <span>IP</span>
-        </button>
-        <button id="swapTab" class="tab-button">
-            <svg class="tab-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M7 16V4M7 4L3 8M7 4L11 8" />
-                <path d="M17 8v12M17 20l4-4M17 20l-4-4" />
-            </svg>
-            <span>Swap</span>
-        </button>
-        <button id="loanTab" class="tab-button">
-            <svg class="tab-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M7 16V4M7 4L3 8M7 4L11 8" />
-                <path d="M17 8v12M17 20l4-4M17 20l-4-4" />
-            </svg>
-            <span>Loan</span>
-        </button>
+
+    <!-- Create Wallet Name Screen -->
+    <div id="createWalletNameScreen" class="screen">
+        <h2>Create New Wallet</h2>
+        <div class="input-group">
+            <label for="walletName">Wallet Name (optional)</label>
+            <input type="text" id="walletName" placeholder="My Wallet">
+        </div>
+        <button id="confirmWalletName" class="purple-button">Continue</button>
+        <button id="backToOptions" class="purple-button">Back</button>
     </div>
-    
-    <script src="../scripts/utils/bip39.js"></script>
-    <script src="../scripts/utils/crypto.js"></script>
-    <script src="../popup.js"></script>
-    <script src="../lib/web3.min.js"></script>
-</body>
+
+    <!-- Import Screen -->
+    <div id="importScreen" class="screen">
+        <h2>Import Wallet</h2>
+        <div class="input-group">
+            <label for="walletName">Wallet Name (optional)</label>
+            <input type="text" id="importWalletName" placeholder="My Imported Wallet">
+        </div>
+        <div class="input-group">
+            <label for="privateKey">Private Key</label>
+            <input type="password" id="privateKey" placeholder="Enter your private key">
+            <button id="togglePrivateKey" class="toggle-visibility" type="button">Show</button>
+        </div>
+        <div id="importError" class="error"></div>
+        <button id="confirmImport" class="purple-button">Import Wallet</button>
+        <button id="backToImportOptions" class="purple-button">Back</button>
+    </div>
+
+    <!-- Mnemonic Display Screen -->
+    <div id="mnemonicScreen" class="screen">
+        <h2>Secret Recovery Phrase</h2>
+        <p>Write down these 12 words in order. You'll need them to recover your wallet.</p>
+        <div id="wordGrid"></div>
+        <p style="text-align: center;">Warning: Never share these words with anyone!</p>
+        <button id="mnemonicConfirm" class="purple-button-large">I've written them down</button>
+    </div>
+
+    <!-- Verification Screen -->
+    <div id="verificationScreen" class="screen">
+        <h2>Verify Your Backup</h2>
+        <p>Please enter the requested words to verify you've saved them.</p>
+        <div id="verificationInputs"></div>
+        <button id="verifyWords" class="purple-button">Verify</button>
+    </div>
+</div>
