@@ -342,7 +342,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     const { hasPassword } = await chrome.storage.local.get('hasPassword');
     const { wallets = [] } = await chrome.storage.local.get('wallets');
     
-    window.ACTIVE_WALLET = wallets[0]["address"];
+    if (wallets.length > 0) {
+        window.ACTIVE_WALLET = wallets[0]["address"];
+    }
 
     // Show appropriate initial screen
     if (!hasPassword) {
