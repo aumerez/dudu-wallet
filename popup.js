@@ -1,6 +1,6 @@
-// Popup.js
+// Popup.js - Archivo principal de navegación
 
-// Load scripts dynamically when needed
+// Cargar scripts dinámicamente cuando se necesiten
 window.loadScript = function(scriptPath) {
     return new Promise((resolve, reject) => {
         const script = document.createElement('script');
@@ -21,21 +21,21 @@ window.loadScript = function(scriptPath) {
     });
 };
 
-// Dynamic Content Loading
+// Cargar contenido dinámicamente
 async function loadContent(viewName) {
     try {
         const response = await fetch(`../views/${viewName}.html`);
         const html = await response.text();
         
-        // Get the container and set the content
+        // Obtener el contenedor y establecer el contenido
         const contentContainer = document.getElementById('dynamicContent');
         contentContainer.innerHTML = html;
         
-        // Return a promise that resolves when the DOM is updated
+        // Devolver una promesa que se resuelve cuando el DOM se actualiza
         return new Promise(resolve => {
-            // Use requestAnimationFrame to ensure the DOM is updated
+            // Usar requestAnimationFrame para asegurar que el DOM se actualiza
             requestAnimationFrame(() => {
-                // Add another frame for good measure
+                // Añadir otro frame para mayor seguridad
                 requestAnimationFrame(() => {
                     resolve(true);
                 });
@@ -47,7 +47,7 @@ async function loadContent(viewName) {
     }
 }
 
-// Tab Navigation Functions
+// Función de navegación por pestañas
 function setupTabNavigation() {
     const walletTab = document.getElementById('walletTab');
     const trendsTab = document.getElementById('trendsTab');
@@ -55,7 +55,7 @@ function setupTabNavigation() {
     const swapTab = document.getElementById('swapTab');
     const loanTab = document.getElementById('loanTab');
     
-    // Only show tab navigation after password setup and when wallets exist
+    // Solo mostrar navegación por pestañas después de configurar la contraseña y cuando existen billeteras
     const showTabs = async () => {
         const { hasPassword } = await chrome.storage.local.get('hasPassword');
         const { wallets = [] } = await chrome.storage.local.get('wallets');
@@ -67,7 +67,7 @@ function setupTabNavigation() {
         }
     };
     
-    // Function to deactivate all tabs
+    // Función para desactivar todas las pestañas
     const deactivateAllTabs = () => {
         walletTab.classList.remove('active');
         trendsTab.classList.remove('active');
@@ -76,35 +76,35 @@ function setupTabNavigation() {
         loanTab.classList.remove('active');
     };
     
-    // Function to hide all screens
+    // Función para ocultar todas las pantallas
     const hideAllScreens = () => {
         document.querySelectorAll('.screen').forEach(screen => screen.classList.remove('active'));
     };
     
-    // Switch to wallets screen
+    // Cambiar a la pantalla de billeteras
     walletTab.addEventListener('click', async () => {
         hideAllScreens();
         
-        // Check if walletsScreen exists (direct screen approach)
+        // Verificar si existe walletsScreen (enfoque de pantalla directa)
         const walletsScreen = document.getElementById('walletsScreen');
         if (walletsScreen) {
             walletsScreen.classList.add('active');
-            // Refresh wallet data if the function exists
-            if (typeof updateWalletsTable === 'function') {
-                updateWalletsTable();
+            // Actualizar datos de la billetera si la función existe
+            if (typeof window.updateWalletsTable === 'function') {
+                window.updateWalletsTable();
             }
         } else {
-            // Fallback to dynamic content approach
+            // Alternativa: usar enfoque de contenido dinámico
             console.log("Using dynamic content approach for wallet");
             document.getElementById('dynamicContentScreen').classList.add('active');
             
-            // Load wallet content dynamically
+            // Cargar contenido de billetera dinámicamente
             await loadContent('wallet-details');
             
-            // Wait for DOM to update
+            // Esperar a que el DOM se actualice
             await new Promise(resolve => setTimeout(resolve, 300));
             
-            // Ensure wallet script is loaded
+            // Asegurarse de que el script de la billetera está cargado
             if (!window.walletScriptLoaded) {
                 try {
                     await window.loadScript('../scripts/views/wallet-details.js');
@@ -115,32 +115,32 @@ function setupTabNavigation() {
                 }
             }
             
-            // Re-initialize WalletDetailsModule if it exists
+            // Reinicializar WalletDetailsModule si existe
             if (window.initWalletDetailsModule) {
                 console.log("Re-initializing WalletDetailsModule...");
                 window.initWalletDetailsModule();
             }
         }
         
-        // Update tabs
+        // Actualizar pestañas
         deactivateAllTabs();
         walletTab.classList.add('active');
     });
     
-    // Switch to trends screen
+    // Cambiar a la pantalla de tendencias
     trendsTab.addEventListener('click', async () => {
         hideAllScreens();
         
-        // Show dynamic content screen first
+        // Mostrar primero la pantalla de contenido dinámico
         document.getElementById('dynamicContentScreen').classList.add('active');
         
-        // Load trends content dynamically
+        // Cargar contenido de tendencias dinámicamente
         await loadContent('trends');
         
-        // Wait a moment for DOM to update
+        // Esperar un momento para que el DOM se actualice
         await new Promise(resolve => setTimeout(resolve, 300)); 
         
-        // Asegurarse de que el script de trends se cargue correctamente
+        // Asegurarse de que el script de tendencias se cargue correctamente
         if (!window.trendsScriptLoaded) {
             try {
                 await window.loadScript('../scripts/views/trends.js');
@@ -151,10 +151,10 @@ function setupTabNavigation() {
             }
         }
         
-        // Espera un poco más antes de inicializar
+        // Esperar un poco más antes de inicializar
         await new Promise(resolve => setTimeout(resolve, 200));
         
-        // Comprobar e inicializar trends
+        // Comprobar e inicializar tendencias
         if (window.initTrends && typeof window.initTrends === 'function') {
             console.log('Calling initTrends function');
             try {
@@ -187,34 +187,34 @@ function setupTabNavigation() {
             }
         }
         
-        // Update tabs
+        // Actualizar pestañas
         deactivateAllTabs();
         trendsTab.classList.add('active');
     });
     
-    // Switch to swap screen
+    // Cambiar a la pantalla de swap
     swapTab.addEventListener('click', async () => {
         hideAllScreens();
         
-        // Show dynamic content screen first
+        // Mostrar primero la pantalla de contenido dinámico
         document.getElementById('dynamicContentScreen').classList.add('active');
 
-        // Load swap content
+        // Cargar contenido de swap
         const contentLoaded = await loadContent('swap');
 
-        // Wait for a moment to ensure DOM is updated
+        // Esperar un momento para asegurar que el DOM se actualiza
         await new Promise(resolve => setTimeout(resolve, 100));
 
-        // Ensure the modal is now in the DOM
+        // Asegurarse de que el modal ahora está en el DOM
         const modal = document.getElementById('tokenSelectModal');
         if (!modal) {
             console.error("❌ Modal not found after swap content loaded!");
         } else {
             console.log("✅ Modal found after swap content loaded!");
-            modal.style.display = 'none'; // Ensure it starts hidden
+            modal.style.display = 'none'; // Asegurarse de que comienza oculto
         }
 
-        // Load and initialize the script
+        // Cargar e inicializar el script
         if (!window.SwapModule) {
             return new Promise((resolve) => {
                 const script = document.createElement('script');
@@ -233,24 +233,25 @@ function setupTabNavigation() {
             }
         }
 
-        // Update tabs
+        // Actualizar pestañas
         deactivateAllTabs();
         swapTab.classList.add('active');
     });
 
+    // Cambiar a la pantalla de préstamos
     loanTab.addEventListener('click', async () => {
         hideAllScreens();
         
-        // Show dynamic content screen first
+        // Mostrar primero la pantalla de contenido dinámico
         document.getElementById('dynamicContentScreen').classList.add('active');
 
-        // Load loan content
+        // Cargar contenido de préstamos
         await loadContent('loan');
 
-        // Wait for a moment to ensure DOM is updated
+        // Esperar un momento para asegurar que el DOM se actualiza
         await new Promise(resolve => setTimeout(resolve, 100));
 
-        // Load and initialize the script
+        // Cargar e inicializar el script
         if (!window.loanModule) {
             return new Promise((resolve) => {
                 const script = document.createElement('script');
@@ -269,25 +270,25 @@ function setupTabNavigation() {
             }
         }
 
-        // Update tabs
+        // Actualizar pestañas
         deactivateAllTabs();
         loanTab.classList.add('active');
     });
 
-    // Switch to IP screen
+    // Cambiar a la pantalla de IP
     ipTab.addEventListener('click', async () => {
         hideAllScreens();
         
-        // Show dynamic content screen
+        // Mostrar pantalla de contenido dinámico
         document.getElementById('dynamicContentScreen').classList.add('active');
         
-        // Load IP content dynamically
+        // Cargar contenido de IP dinámicamente
         await loadContent('ip');
         
-        // Wait a moment for DOM to update
+        // Esperar un momento para que el DOM se actualice
         await new Promise(resolve => setTimeout(resolve, 300)); 
         
-        // Check if IP script is already loaded
+        // Verificar si el script de IP ya está cargado
         if (!window.ipScriptLoaded) {
             await window.loadScript('../scripts/views/ip.js');
             window.ipScriptLoaded = true;
@@ -300,7 +301,7 @@ function setupTabNavigation() {
             await new Promise(resolve => setTimeout(resolve, 2000));
         }
         
-        // Initialize IP-specific scripts
+        // Inicializar scripts específicos de IP
         if (window.initIP && typeof window.initIP === 'function') {
             window.initIP();
         } else {
@@ -321,28 +322,28 @@ function setupTabNavigation() {
             }
         }
         
-        // Update tabs
+        // Actualizar pestañas
         deactivateAllTabs();
         ipTab.classList.add('active');
     });
     
-    // Check if tabs should be shown
+    // Verificar si se deben mostrar las pestañas
     showTabs();
 }
 
-// Main Event Listener
+// Event Listener principal
 document.addEventListener('DOMContentLoaded', async () => {
     console.log("LOADED")
-    // Initialize window variables
+    // Inicializar variables de window
     window.currentMnemonic = window.currentMnemonic || null;
     window.wordsToVerify = window.wordsToVerify || null;
     window.isUpdating = false;
     window.pendingWalletName = window.pendingWalletName || null;
 
-    // Initialize tab navigation
+    // Inicializar navegación por pestañas
     document.querySelector('.tab-navigation').style.display = 'none';
 
-    // Get all screen elements
+    // Obtener todos los elementos de pantalla
     const setupScreen = document.getElementById('setupScreen');
     const createWalletScreen = document.getElementById('createWalletScreen');
     const createWalletNameScreen = document.getElementById('createWalletNameScreen');
@@ -352,13 +353,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     const importScreen = document.getElementById('importScreen');
     const dynamicContentScreen = document.getElementById('dynamicContentScreen');
 
-    // Hide all screens initially if they exist
+    // Ocultar todas las pantallas inicialmente si existen
     [setupScreen, createWalletScreen, createWalletNameScreen, mnemonicScreen, 
      verificationScreen, walletsScreen, importScreen, dynamicContentScreen].forEach(screen => {
         if (screen) screen.classList.remove('active');
     });
 
-    // Get stored state
+    // Obtener estado almacenado
     const { hasPassword } = await chrome.storage.local.get('hasPassword');
     const { wallets = [] } = await chrome.storage.local.get('wallets');
     
@@ -367,7 +368,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.ACTIVE_WALLET = wallets[0]["address"];
     }
 
-    // Show appropriate initial screen
+    // Mostrar la pantalla inicial apropiada
     if (!hasPassword) {
         // Verificar si setupScreen existe antes de añadir la clase
         if (setupScreen) {
@@ -381,20 +382,20 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
     } else if (wallets.length > 0) {
-        // Check if we're using direct screens or dynamic content
+        // Verificar si estamos usando pantallas directas o contenido dinámico
         if (walletsScreen) {
             walletsScreen.classList.add('active');
-            if (typeof updateWalletsTable === 'function') {
-                await updateWalletsTable();
-                if (typeof startBalanceUpdates === 'function') {
-                    startBalanceUpdates();
+            if (typeof window.updateWalletsTable === 'function') {
+                await window.updateWalletsTable();
+                if (typeof window.startBalanceUpdates === 'function') {
+                    window.startBalanceUpdates();
                 }
             }
         } else if (dynamicContentScreen) {
             dynamicContentScreen.classList.add('active');
             await loadContent('wallet-details');
             
-            // Ensure wallet script is loaded
+            // Asegurarse de que el script de la billetera está cargado
             if (!window.walletScriptLoaded) {
                 try {
                     await window.loadScript('../scripts/views/wallet-details.js');
@@ -406,7 +407,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
         
-        // Initialize tab navigation
+        // Inicializar navegación por pestañas
         setupTabNavigation();
     } else {
         // Verificar si createWalletScreen existe antes de añadir la clase

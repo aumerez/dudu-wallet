@@ -1,5 +1,6 @@
-// Wallet Functions - Funciones específicas para la billetera
-// Utility Functions
+// wallet-functions.js - Funciones específicas para la billetera
+
+// Funciones de utilidad
 async function getBalance(address) {
     try {
         const web3 = new Web3("https://aeneid.storyrpc.io/");
@@ -19,7 +20,7 @@ async function updateWalletsTable() {
     try {
         const { wallets = [] } = await chrome.storage.local.get('wallets');
         
-        // Fetch all balances concurrently
+        // Obtener todos los saldos de forma concurrente
         const walletsWithBalances = await Promise.all(
             wallets.map(async (wallet) => ({
                 ...wallet,
@@ -27,7 +28,7 @@ async function updateWalletsTable() {
             }))
         );
 
-        // Update table only after all balances are fetched
+        // Actualizar tabla solo después de obtener todos los saldos
         const tbody = document.getElementById('walletsTableBody');
         if (!tbody) {
             console.error('Error: walletsTableBody element not found');
@@ -55,20 +56,20 @@ async function updateWalletsTable() {
                 </td>
             `;
             
-            // Make the entire row clickable except the copy button
+            // Hacer que toda la fila sea clickeable excepto el botón de copiar
             row.style.cursor = 'pointer';
             
-            // Add click handler for the row
+            // Añadir manejador de eventos para la fila
             row.addEventListener('click', (event) => {
                 if (!event.target.closest('.copy-btn')) {
                     window.location.href = chrome.runtime.getURL('views/wallet-details.html') + `?address=${wallet.address}`;
                 }
             });
             
-            // Copy button handler
+            // Manejador para el botón de copiar
             const copyBtn = row.querySelector('.copy-btn');
             copyBtn.addEventListener('click', (e) => {
-                e.stopPropagation(); // Prevent row click when clicking the button
+                e.stopPropagation(); // Prevenir clic en la fila cuando se hace clic en el botón
                 navigator.clipboard.writeText(wallet.address)
                     .then(() => {
                         const toast = document.createElement('div');
@@ -109,7 +110,7 @@ function copyAddress(address) {
         .catch(err => console.error('Error copying address:', err));
 }
 
-// Setup Functions
+// Funciones de configuración
 function setupVerification() {
     const indices = [];
     while (indices.length < 3) {
@@ -122,6 +123,11 @@ function setupVerification() {
     window.wordsToVerify = indices;
 
     const verificationInputs = document.getElementById('verificationInputs');
+    if (!verificationInputs) {
+        console.error('Error: verificationInputs element not found');
+        return;
+    }
+    
     verificationInputs.innerHTML = indices.map(index => `
         <div class="input-group">
             <label>Word #${index + 1}</label>
@@ -130,9 +136,9 @@ function setupVerification() {
     `).join('');
 }
 
-// Password Setup Handler
+// Event Listener para la inicialización de la billetera
 document.addEventListener('DOMContentLoaded', async () => {
-    // Los event listeners específicos para la wallet
+    // Manejador de configuración de contraseña
     const confirmPasswordBtn = document.getElementById('confirmPasswordBtn');
     if (confirmPasswordBtn) {
         confirmPasswordBtn.addEventListener('click', async () => {
@@ -197,7 +203,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    // Create New Wallet Flow
+    // Flujo de creación de nueva billetera
     const createNewWalletBtn = document.getElementById('createNewWallet');
     if (createNewWalletBtn) {
         createNewWalletBtn.addEventListener('click', () => {
@@ -235,8 +241,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                 });
 
                 const existingWordGrid = document.getElementById('wordGrid');
-                existingWordGrid.innerHTML = '';
-                existingWordGrid.appendChild(wordGrid);
+                if (existingWordGrid) {
+                    existingWordGrid.innerHTML = '';
+                    existingWordGrid.appendChild(wordGrid);
+                }
 
                 const createWalletNameScreen = document.getElementById('createWalletNameScreen');
                 const mnemonicScreen = document.getElementById('mnemonicScreen');
@@ -249,7 +257,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    // Import Wallet Flow
+    // Flujo de importación de billetera
     const importWalletBtn = document.getElementById('importWallet');
     if (importWalletBtn) {
         importWalletBtn.addEventListener('click', () => {
@@ -261,7 +269,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    // Back button for Create Wallet Name screen
+    // Botón de regreso para la pantalla de nombre de billetera
     const backToOptionsBtn = document.getElementById('backToOptions');
     if (backToOptionsBtn) {
         backToOptionsBtn.addEventListener('click', () => {
@@ -273,30 +281,113 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    // ... (resto de los event listeners de wallet)
-    
-    // Los siguientes botones se configuran de manera similar a los anteriores
-    
-    // Para el botón Toggle Private Key
+    // Botón de regreso para la pantalla de importación
+    const backToImportOptionsBtn = document.getElementById('backToImportOptions');
+    if (backToImportOptionsBtn) {
+        backToImportOptionsBtn.addEventListener('click', () => {
+            const importScreen = document.getElementById('importScreen');
+            const createWalletScreen = document.getElementById('createWalletScreen');
+            
+            if (importScreen) {
+                importScreen.classList.remove('active');
+                const importWalletNameInput = document.getElementById('importWalletName');
+                const privateKeyInput = document.getElementById('privateKey');
+                if (importWalletNameInput) importWalletNameInput.value = '';
+                if (privateKeyInput) privateKeyInput.value = '';
+            }
+            
+            if (createWalletScreen) createWalletScreen.classList.add('active');
+        });
+    }
+
+    // Para el botón de alternar visibilidad de clave privada
     const togglePrivateKeyBtn = document.getElementById('togglePrivateKey');
     if (togglePrivateKeyBtn) {
         togglePrivateKeyBtn.addEventListener('click', () => {
             const privateKeyInput = document.getElementById('privateKey');
-            if (privateKeyInput.type === 'password') {
-                privateKeyInput.type = 'text';
-                togglePrivateKeyBtn.textContent = 'Hide';
-            } else {
-                privateKeyInput.type = 'password';
-                togglePrivateKeyBtn.textContent = 'Show';
+            if (privateKeyInput) {
+                if (privateKeyInput.type === 'password') {
+                    privateKeyInput.type = 'text';
+                    togglePrivateKeyBtn.textContent = 'Hide';
+                } else {
+                    privateKeyInput.type = 'password';
+                    togglePrivateKeyBtn.textContent = 'Show';
+                }
             }
         });
     }
     
-    // Para el botón Confirm Import
+    // Para el botón de confirmar importación
     const confirmImportBtn = document.getElementById('confirmImport');
     if (confirmImportBtn) {
         confirmImportBtn.addEventListener('click', async () => {
-            // Código para importar wallet (omitido por brevedad)
+            const privateKeyInput = document.getElementById('privateKey');
+            const importWalletNameInput = document.getElementById('importWalletName');
+            const errorDiv = document.getElementById('importError');
+            
+            if (!privateKeyInput || !errorDiv) {
+                console.error('Required elements not found for import');
+                return;
+            }
+            
+            const privateKey = privateKeyInput.value.trim();
+            const walletName = importWalletNameInput ? 
+                importWalletNameInput.value.trim() || 'Imported Wallet' : 
+                'Imported Wallet';
+
+            try {
+                if (!privateKey.match(/^[0-9a-fA-F]{64}$/)) {
+                    throw new Error('Invalid private key format');
+                }
+
+                const web3 = new Web3();
+                const account = web3.eth.accounts.privateKeyToAccount(privateKey);
+                
+                const { encryptionKey, salt } = await chrome.storage.local.get(['encryptionKey', 'salt']);
+                if (!encryptionKey || !salt) {
+                    throw new Error('Encryption key not found');
+                }
+
+                const key = await crypto.subtle.importKey(
+                    'raw',
+                    new Uint8Array(encryptionKey),
+                    { name: 'AES-GCM' },
+                    false,
+                    ['encrypt', 'decrypt']
+                );
+
+                const encryptedPrivateKey = await CryptoUtils.encrypt(privateKey, key);
+
+                const newWallet = {
+                    name: walletName,
+                    address: account.address,
+                    encryptedPrivateKey: encryptedPrivateKey,
+                    createdAt: new Date().toISOString()
+                };
+
+                const { wallets = [] } = await chrome.storage.local.get('wallets');
+                wallets.push(newWallet);
+                await chrome.storage.local.set({ wallets });
+
+                if (privateKeyInput) privateKeyInput.value = '';
+                
+                const importScreen = document.getElementById('importScreen');
+                const walletsScreen = document.getElementById('walletsScreen');
+                
+                if (importScreen) importScreen.classList.remove('active');
+                if (walletsScreen) {
+                    walletsScreen.classList.add('active');
+                    await updateWalletsTable();
+                }
+                
+                // Configurar navegación por pestañas cuando existen billeteras
+                if (typeof window.setupTabNavigation === 'function') {
+                    window.setupTabNavigation();
+                }
+            } catch (error) {
+                errorDiv.textContent = error.message;
+                errorDiv.style.display = 'block';
+            }
         });
     }
     
@@ -317,11 +408,82 @@ document.addEventListener('DOMContentLoaded', async () => {
     const verifyWordsBtn = document.getElementById('verifyWords');
     if (verifyWordsBtn) {
         verifyWordsBtn.addEventListener('click', async () => {
-            // Código para verificar palabras de la mnemónica (omitido por brevedad)
+            const inputs = document.querySelectorAll('.word-verify');
+            let allCorrect = true;
+            
+            inputs.forEach(input => {
+                const index = parseInt(input.dataset.index);
+                const inputValue = input.value.toLowerCase().trim();
+                const correctWord = window.currentMnemonic[index];
+                
+                if (inputValue !== correctWord) {
+                    allCorrect = false;
+                }
+            });
+        
+            if (!allCorrect) {
+                alert('Some words are incorrect. Please verify and try again.');
+                return;
+            }
+        
+            try {
+                console.log('Creating new wallet...');
+                const web3 = new Web3();
+                // Generate a new account
+                const account = web3.eth.accounts.create();
+                console.log('Account created:', account); 
+                
+                // Get the encryption key
+                const { encryptionKey } = await chrome.storage.local.get('encryptionKey');
+                const key = await crypto.subtle.importKey(
+                    'raw',
+                    new Uint8Array(encryptionKey),
+                    { name: 'AES-GCM' },
+                    false,
+                    ['encrypt', 'decrypt']
+                );
+
+                // Encrypt the private key
+                const encryptedPrivateKey = await CryptoUtils.encrypt(
+                    account.privateKey.substring(2), // Remove '0x' prefix
+                    key
+                );
+
+                const newWallet = {
+                    name: window.pendingWalletName,
+                    address: account.address,
+                    encryptedPrivateKey: encryptedPrivateKey,
+                    createdAt: new Date().toISOString()
+                };
+
+                const { wallets = [] } = await chrome.storage.local.get('wallets');
+                wallets.push(newWallet);
+                await chrome.storage.local.set({ wallets });
+
+                await updateWalletsTable();
+
+                const verificationScreen = document.getElementById('verificationScreen');
+                const walletsScreen = document.getElementById('walletsScreen');
+                
+                if (verificationScreen) verificationScreen.classList.remove('active');
+                if (walletsScreen) walletsScreen.classList.add('active');
+                
+                // Setup tab navigation when wallets exist
+                if (typeof window.setupTabNavigation === 'function') {
+                    window.setupTabNavigation();
+                }
+
+                // Clear sensitive data
+                window.wordsToVerify = null;
+                window.currentMnemonic = null;
+                window.pendingWalletName = null;
+            } catch (error) {
+                console.error('Error creating wallet:', error);
+            }
         });
     }
     
-    // Para el botón Create Another Wallet
+    // Para el botón "Create Another Wallet"
     const createAnotherWalletBtn = document.getElementById('createAnotherWallet');
     if (createAnotherWalletBtn) {
         createAnotherWalletBtn.addEventListener('click', () => {
@@ -333,7 +495,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
     
-    // Para el botón Back to Create Wallet
+    // Para el botón "Back to Create Wallet"
     const backToCreateWalletBtn = document.getElementById('backToCreateWallet');
     if (backToCreateWalletBtn) {
         backToCreateWalletBtn.addEventListener('click', () => {
