@@ -338,6 +338,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Get all screen elements
     const dynamicContentScreen = document.getElementById('dynamicContentScreen');
     const createWalletScreen = document.getElementById('createWalletScreen');
+    const setupScreen = document.getElementById('setupScreen');
 
     // Get stored state
     const { hasPassword } = await chrome.storage.local.get('hasPassword');
