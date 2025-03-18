@@ -85,39 +85,46 @@ function setupTabNavigation() {
     walletTab.addEventListener('click', async () => {
         hideAllScreens();
         
-        console.log("TAB")
-        // Show dynamic content screen first
-        document.getElementById('dynamicContentScreen').classList.add('active');
-
-        // Load wallet content dynamically
-        await loadContent('wallet-details');
-
-        // Wait for DOM to update
-        await new Promise(resolve => setTimeout(resolve, 300));
-
-        // Asegurarse de que el script de trends se cargue correctamente
-        if (!window.walletScriptLoaded) {
-            try {
-                await window.loadScript('../scripts/views/wallet-details.js');
-                window.walletScriptLoaded = true;
-                console.log('Wallet script loaded successfully');
-            } catch (error) {
-                console.error('Error loading Wallet script:', error);
+        // Check if walletsScreen exists (direct screen approach)
+        const walletsScreen = document.getElementById('walletsScreen');
+        if (walletsScreen) {
+            walletsScreen.classList.add('active');
+            // Refresh wallet data if the function exists
+            if (typeof updateWalletsTable === 'function') {
+                updateWalletsTable();
             }
-        }
-
-        //  Ensure WalletDetailsModule is re-initialized every time tab is clicked
-        if (window.initWalletDetailsModule) {
-            console.log("Re-initializing WalletDetailsModule...");
-            window.initWalletDetailsModule();
         } else {
-            console.error("⚠️ initWalletDetailsModule is not defined.");
+            // Fallback to dynamic content approach
+            console.log("Using dynamic content approach for wallet");
+            document.getElementById('dynamicContentScreen').classList.add('active');
+            
+            // Load wallet content dynamically
+            await loadContent('wallet-details');
+            
+            // Wait for DOM to update
+            await new Promise(resolve => setTimeout(resolve, 300));
+            
+            // Ensure wallet script is loaded
+            if (!window.walletScriptLoaded) {
+                try {
+                    await window.loadScript('../scripts/views/wallet-details.js');
+                    window.walletScriptLoaded = true;
+                    console.log('Wallet script loaded successfully');
+                } catch (error) {
+                    console.error('Error loading Wallet script:', error);
+                }
+            }
+            
+            // Re-initialize WalletDetailsModule if it exists
+            if (window.initWalletDetailsModule) {
+                console.log("Re-initializing WalletDetailsModule...");
+                window.initWalletDetailsModule();
+            }
         }
         
         // Update tabs
         deactivateAllTabs();
         walletTab.classList.add('active');
-    
     });
     
     // Switch to trends screen
@@ -131,7 +138,7 @@ function setupTabNavigation() {
         await loadContent('trends');
         
         // Wait a moment for DOM to update
-        await new Promise(resolve => setTimeout(resolve, 300)); // Aumentado a 300ms para dar más tiempo
+        await new Promise(resolve => setTimeout(resolve, 300)); 
         
         // Asegurarse de que el script de trends se cargue correctamente
         if (!window.trendsScriptLoaded) {
@@ -324,7 +331,6 @@ function setupTabNavigation() {
 }
 
 // Main Event Listener
-// Main Event Listener
 document.addEventListener('DOMContentLoaded', async () => {
     console.log("LOADED")
     // Initialize window variables
@@ -337,9 +343,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.querySelector('.tab-navigation').style.display = 'none';
 
     // Get all screen elements
-    const dynamicContentScreen = document.getElementById('dynamicContentScreen');
-    const createWalletScreen = document.getElementById('createWalletScreen');
     const setupScreen = document.getElementById('setupScreen');
+    const createWalletScreen = document.getElementById('createWalletScreen');
+    const createWalletNameScreen = document.getElementById('createWalletNameScreen');
+    const mnemonicScreen = document.getElementById('mnemonicScreen');
+    const verificationScreen = document.getElementById('verificationScreen');
+    const walletsScreen = document.getElementById('walletsScreen');
+    const importScreen = document.getElementById('importScreen');
+    const dynamicContentScreen = document.getElementById('dynamicContentScreen');
+
+    // Hide all screens initially if they exist
+    [setupScreen, createWalletScreen, createWalletNameScreen, mnemonicScreen, 
+     verificationScreen, walletsScreen, importScreen, dynamicContentScreen].forEach(screen => {
+        if (screen) screen.classList.remove('active');
+    });
 
     // Get stored state
     const { hasPassword } = await chrome.storage.local.get('hasPassword');
@@ -359,15 +376,24 @@ document.addEventListener('DOMContentLoaded', async () => {
             console.error('Error: setupScreen element not found in the DOM');
             // Alternativa: cargar la pantalla de configuración
             await loadContent('setup');
-            document.getElementById('dynamicContentScreen').classList.add('active');
+            if (dynamicContentScreen) {
+                dynamicContentScreen.classList.add('active');
+            }
         }
     } else if (wallets.length > 0) {
-        if (dynamicContentScreen) {
+        // Check if we're using direct screens or dynamic content
+        if (walletsScreen) {
+            walletsScreen.classList.add('active');
+            if (typeof updateWalletsTable === 'function') {
+                await updateWalletsTable();
+                if (typeof startBalanceUpdates === 'function') {
+                    startBalanceUpdates();
+                }
+            }
+        } else if (dynamicContentScreen) {
             dynamicContentScreen.classList.add('active');
-            
-            // Load wallet content at startup
             await loadContent('wallet-details');
-        
+            
             // Ensure wallet script is loaded
             if (!window.walletScriptLoaded) {
                 try {
@@ -378,12 +404,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                     console.error('Error loading Wallet script at startup:', error);
                 }
             }
-        
-            // Initialize tab navigation
-            setupTabNavigation();
-        } else {
-            console.error('Error: dynamicContentScreen element not found in the DOM');
         }
+        
+        // Initialize tab navigation
+        setupTabNavigation();
     } else {
         // Verificar si createWalletScreen existe antes de añadir la clase
         if (createWalletScreen) {
@@ -392,7 +416,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             console.error('Error: createWalletScreen element not found in the DOM');
             // Alternativa: cargar la pantalla de creación de billetera dinámicamente
             await loadContent('create-wallet');
-            document.getElementById('dynamicContentScreen').classList.add('active');
+            if (dynamicContentScreen) {
+                dynamicContentScreen.classList.add('active');
+            }
         }
     }
 });
