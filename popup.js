@@ -324,6 +324,7 @@ function setupTabNavigation() {
 }
 
 // Main Event Listener
+// Main Event Listener
 document.addEventListener('DOMContentLoaded', async () => {
     console.log("LOADED")
     // Initialize window variables
@@ -344,35 +345,54 @@ document.addEventListener('DOMContentLoaded', async () => {
     const { hasPassword } = await chrome.storage.local.get('hasPassword');
     const { wallets = [] } = await chrome.storage.local.get('wallets');
     
+    // Verificar si hay billeteras disponibles antes de asignar la activa
     if (wallets.length > 0) {
         window.ACTIVE_WALLET = wallets[0]["address"];
     }
 
     // Show appropriate initial screen
     if (!hasPassword) {
-        setupScreen.classList.add('active');
-    } else if (wallets.length > 0) {
-        dynamicContentScreen.classList.add('active');
-        
-        // Load wallet content at startup
-        await loadContent('wallet-details');
-    
-        // Ensure wallet script is loaded
-        if (!window.walletScriptLoaded) {
-            try {
-                await window.loadScript('../scripts/views/wallet-details.js');
-                window.walletScriptLoaded = true;
-                console.log('Wallet script loaded successfully at startup');
-            } catch (error) {
-                console.error('Error loading Wallet script at startup:', error);
-            }
+        // Verificar si setupScreen existe antes de añadir la clase
+        if (setupScreen) {
+            setupScreen.classList.add('active');
+        } else {
+            console.error('Error: setupScreen element not found in the DOM');
+            // Alternativa: cargar la pantalla de configuración
+            await loadContent('setup');
+            document.getElementById('dynamicContentScreen').classList.add('active');
         }
-    
-        // Initialize tab navigation
-        setupTabNavigation();
-    }else {
-        createWalletScreen.classList.add('active');
+    } else if (wallets.length > 0) {
+        if (dynamicContentScreen) {
+            dynamicContentScreen.classList.add('active');
+            
+            // Load wallet content at startup
+            await loadContent('wallet-details');
+        
+            // Ensure wallet script is loaded
+            if (!window.walletScriptLoaded) {
+                try {
+                    await window.loadScript('../scripts/views/wallet-details.js');
+                    window.walletScriptLoaded = true;
+                    console.log('Wallet script loaded successfully at startup');
+                } catch (error) {
+                    console.error('Error loading Wallet script at startup:', error);
+                }
+            }
+        
+            // Initialize tab navigation
+            setupTabNavigation();
+        } else {
+            console.error('Error: dynamicContentScreen element not found in the DOM');
+        }
+    } else {
+        // Verificar si createWalletScreen existe antes de añadir la clase
+        if (createWalletScreen) {
+            createWalletScreen.classList.add('active');
+        } else {
+            console.error('Error: createWalletScreen element not found in the DOM');
+            // Alternativa: cargar la pantalla de creación de billetera dinámicamente
+            await loadContent('create-wallet');
+            document.getElementById('dynamicContentScreen').classList.add('active');
+        }
     }
-   
-   
 });
