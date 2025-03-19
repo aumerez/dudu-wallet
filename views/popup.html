@@ -84,8 +84,111 @@
             <img src="../assets/images/dudu-logo.png" alt="DUDU Logo" class="dudu-logo-image">
         </div>
         <div class="container">
-            
+            <!-- Password Setup Screen -->
+            <div id="setupScreen" class="screen">
+                <div class="container">
+                    
+                    <h2 class="setup-title">Create password</h2>
+                    
+                    <div class="input-group">
+                        <label for="password">New password (8 characters min)</label>
+                        <input type="password" id="password" placeholder="" class="password-input">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="confirmPassword">Confirm password</label>
+                        <input type="password" id="confirmPassword" placeholder="" class="password-input">
+                        <span id="passwordError" class="error">Passwords do not match</span>
+                    </div>
+                    
+                    <button id="confirmPasswordBtn" class="purple-button">Create</button>
+                </div>
+            </div>
 
+            <!-- Create Wallet Screen -->
+            <div id="createWalletScreen" class="screen">
+                <div class="container">
+                    <h2>Add New Wallet</h2>
+                    
+                    <div class="wallet-options">
+                        <button id="createNewWallet" class="option-btn">
+                            <div class="option-icon">
+                                <img src="../assets/images/plus-icon.png" alt="Create" class="icon-image">
+                            </div>
+                            <div class="option-content">
+                                <div class="option-title">Create wallet</div>
+                                <div class="option-description">Generate a new wallet with a recovery phrase</div>
+                            </div>
+                        </button>
+                
+                        <button id="importWallet" class="option-btn">
+                            <div class="option-icon">
+                                <img src="../assets/images/download-icon.png" alt="Import" class="icon-image">
+                            </div>
+                            <div class="option-content">
+                                <div class="option-title" >Import wallet</div>
+                                <div class="option-description">Import existing wallet using private keys</div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Create Wallet Name Screen -->
+            <div id="createWalletNameScreen" class="screen">
+                <h2>Create New Wallet</h2>
+                <div class="input-group">
+                    <label for="walletName">Wallet Name (optional)</label>
+                    <input type="text" id="walletName" placeholder="My Wallet">
+                </div>
+                <button id="confirmWalletName" class="purple-button">Continue</button>
+                <button id="backToOptions" class="purple-button">Back</button>
+            </div>
+
+            <!-- Import Screen -->
+            <div id="importScreen" class="screen">
+                <h2>Import Wallet</h2>
+                <div class="input-group">
+                    <label for="walletName">Wallet Name (optional)</label>
+                    <input type="text" id="importWalletName" placeholder="My Imported Wallet">
+                </div>
+                <div class="input-group">
+                    <label for="privateKey">Private Key</label>
+                    <input type="password" id="privateKey" placeholder="Enter your private key">
+                    <button id="togglePrivateKey" class="toggle-visibility" type="button">Show</button>
+                </div>
+                <div id="importError" class="error"></div>
+                <button id="confirmImport" class="purple-button">Import Wallet</button>
+                <button id="backToImportOptions" class="purple-button">Back</button>
+            </div>
+
+            <!-- Mnemonic Display Screen -->
+            <div id="mnemonicScreen" class="screen">
+                <h2>Secret Recovery Phrase</h2>
+                <p>Write down these 12 words in order. You'll need them to recover your wallet.</p>
+                <div id="wordGrid"></div>
+                <p style="text-align: center;">Warning: Never share these words with anyone!</p>
+                <button id="mnemonicConfirm" class="purple-button-large">I've written them down</button>
+            </div>
+
+            <!-- Verification Screen -->
+            <div id="verificationScreen" class="screen">
+                <h2>Verify Your Backup1</h2>
+                <p>Please enter the requested words to verify you've saved them.</p>
+                <div id="verificationInputs"></div>
+                <button id="verifyWords" class="purple-button">Verify</button>
+            </div>
+
+            <!-- Wallets Screen -->
+            <div id="walletsScreen" class="screen">
+                <h2>Your Wallets</h2>
+                <table class="wallet-table">
+                    <tbody id="walletsTableBody">
+                    </tbody>
+                </table>
+                <button id="createAnotherWallet" class="purple-button-large">Create Another Wallet</button>
+            </div>
+            
             <!-- Dynamic Content Screen (Replaces iframes) -->
             <div id="dynamicContentScreen" class="screen">
                 <div id="dynamicContent"></div>
@@ -135,6 +238,8 @@
     
     <script src="../scripts/utils/bip39.js"></script>
     <script src="../scripts/utils/crypto.js"></script>
-    <script src="../popup.js"></script>
     <script src="../lib/web3.min.js"></script>
+    <script src="../scripts/views/wallet-functions.js"></script>
+    <script src="../popup.js"></script>
 </body>
+</html>

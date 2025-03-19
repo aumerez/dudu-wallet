@@ -4,6 +4,13 @@
 window.initIP = function() {
     console.log('Initializing IP view');
     
+    // Wait a short moment to ensure the HTML is fully rendered
+    setTimeout(() => {
+        initializeIPView();
+    }, 300); // 300ms delay
+};
+
+function initializeIPView() {
     // Contract ABI for the register function
     const ipAssetRegistryABI = [
         {
@@ -47,14 +54,19 @@ window.initIP = function() {
             console.log('Opening documentation');
             chrome.tabs.create({ url: 'https://docs.story.foundation' });
         });
+        console.log('Documentation button found and event listener attached');
     } else {
-        console.error('Documentation button not found');
+        console.error('Documentation button not found. DOM elements available:', 
+                     document.querySelectorAll('button').length,
+                     'Elements with .ip-action-button:', 
+                     document.querySelectorAll('.ip-action-button').length);
     }
     
     // Register button listener
     const registerButton = document.querySelector('.ip-register-button');
     if (registerButton) {
         registerButton.addEventListener('click', handleRegisterClick);
+        console.log('Register button found and event listener attached');
     } else {
         console.error('Register button not found');
     }
