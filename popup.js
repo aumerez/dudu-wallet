@@ -366,6 +366,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Check if there are wallets available before assigning the active one
     if (wallets.length > 0) {
         window.ACTIVE_WALLET = wallets[0]["address"];
+        chrome.storage.local.set({ activeWallet: wallets[0]["address"] });
     }
 
     // Show the appropriate initial screen

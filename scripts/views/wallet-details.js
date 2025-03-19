@@ -191,7 +191,15 @@ window.WalletDetailsModule = (function() {
         // Initialize with a delay to ensure DOM is ready
         setTimeout(() => {
             // Get wallet address from URL parameters or global variable
-            address = ACTIVE_WALLET;
+        chrome.storage.local.get(['activeWallet'], function(result) {
+                    address = result.activeWallet || window.ACTIVE_WALLET;
+                    
+                    if (!address) {
+                        console.error("No active wallet address found");
+                        window.location.href = '../views/popup.html';
+                        return;
+                    }
+
             console.log("Active wallet address:", address);
             
             // Initialize DOM elements
@@ -216,6 +224,7 @@ window.WalletDetailsModule = (function() {
             // Initialize events and load wallet details
             initEventListeners();
             loadWalletDetails();
+        });
         }, 100);
     }
 

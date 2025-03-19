@@ -4,6 +4,7 @@
 <head>
     <link rel="stylesheet" href="../styles/popup.css">
     <link rel="stylesheet" href="../styles/swap.css">
+    <link rel="stylesheet" href="../styles/wallet-selector.css">
     <title>Simple Crypto Wallet</title>
     <style>
         body {
@@ -83,6 +84,59 @@
         <div class="dudu-logo-container">
             <img src="../assets/images/dudu-logo.png" alt="DUDU Logo" class="dudu-logo-image">
         </div>
+        
+        <!-- New Wallet Selector Component -->
+        <div class="wallet-selector-container">
+            <!-- Current Wallet Display (Always visible) -->
+            <div class="current-wallet" id="currentWalletDisplay">
+                <div class="wallet-icon">
+                    <div class="wallet-icon-circle"></div>
+                </div>
+                <div class="wallet-info">
+                    <div class="wallet-name" id="currentWalletName">My Wallet</div>
+                    <div class="wallet-address" id="currentWalletAddress">0x0000...0000</div>
+                </div>
+                <div class="wallet-dropdown-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </div>
+            </div>
+            
+            <!-- Wallet List (Hidden by default, shown on click) -->
+            <div class="wallet-list-modal" id="walletListModal">
+                <div class="wallet-list-container">
+                    <div class="wallet-list-header">
+                        <h3>Select an account</h3>
+                        <button class="close-modal-btn" id="closeWalletList">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <div class="wallet-search">
+                        <input type="text" id="walletSearch" placeholder="Search accounts" />
+                    </div>
+                    
+                    <div class="wallet-list" id="walletList">
+                        <!-- Wallet items will be inserted here dynamically -->
+                    </div>
+                    
+                    <div class="add-wallet-btn-container">
+                        <button id="addWalletBtn" class="add-wallet-btn">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                            Add account or hardware wallet
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
         <div class="container">
             <!-- Password Setup Screen -->
             <div id="setupScreen" class="screen">
@@ -173,20 +227,18 @@
 
             <!-- Verification Screen -->
             <div id="verificationScreen" class="screen">
-                <h2>Verify Your Backup1</h2>
+                <h2>Verify Your Backup</h2>
                 <p>Please enter the requested words to verify you've saved them.</p>
                 <div id="verificationInputs"></div>
                 <button id="verifyWords" class="purple-button">Verify</button>
             </div>
 
-            <!-- Wallets Screen -->
+            <!-- Wallets Screen (Modified to remove the wallets listing) -->
             <div id="walletsScreen" class="screen">
-                <h2>Your Wallets</h2>
-                <table class="wallet-table">
-                    <tbody id="walletsTableBody">
-                    </tbody>
-                </table>
-                <button id="createAnotherWallet" class="purple-button-large">Create Another Wallet</button>
+                <h2>Your Wallet</h2>
+                <div class="wallet-actions">
+                    <button id="createAnotherWallet" class="purple-button-large">Create Another Wallet</button>
+                </div>
             </div>
             
             <!-- Dynamic Content Screen (Replaces iframes) -->
@@ -240,6 +292,7 @@
     <script src="../scripts/utils/crypto.js"></script>
     <script src="../lib/web3.min.js"></script>
     <script src="../scripts/views/wallet-functions.js"></script>
+    <script src="../scripts/views/wallet-selector.js"></script>
     <script src="../popup.js"></script>
 </body>
 </html>
