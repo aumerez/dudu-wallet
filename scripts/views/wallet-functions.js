@@ -1,6 +1,6 @@
-// wallet-functions.js - Funciones específicas para la billetera
+// wallet-functions.js - Wallet-specific functions
 
-// Funciones de utilidad
+// Utility functions
 async function getBalance(address) {
     try {
         const web3 = new Web3("https://aeneid.storyrpc.io/");
@@ -20,7 +20,7 @@ async function updateWalletsTable() {
     try {
         const { wallets = [] } = await chrome.storage.local.get('wallets');
         
-        // Obtener todos los saldos de forma concurrente
+        // Fetch all balances concurrently
         const walletsWithBalances = await Promise.all(
             wallets.map(async (wallet) => ({
                 ...wallet,
@@ -28,7 +28,7 @@ async function updateWalletsTable() {
             }))
         );
 
-        // Actualizar tabla solo después de obtener todos los saldos
+        // Update table only after fetching all balances
         const tbody = document.getElementById('walletsTableBody');
         if (!tbody) {
             console.error('Error: walletsTableBody element not found');
@@ -56,20 +56,20 @@ async function updateWalletsTable() {
                 </td>
             `;
             
-            // Hacer que toda la fila sea clickeable excepto el botón de copiar
+            // Make the entire row clickable except for the copy button
             row.style.cursor = 'pointer';
             
-            // Añadir manejador de eventos para la fila
+            // Add event handler for the row
             row.addEventListener('click', (event) => {
                 if (!event.target.closest('.copy-btn')) {
                     window.location.href = chrome.runtime.getURL('views/wallet-details.html') + `?address=${wallet.address}`;
                 }
             });
             
-            // Manejador para el botón de copiar
+            // Handler for the copy button
             const copyBtn = row.querySelector('.copy-btn');
             copyBtn.addEventListener('click', (e) => {
-                e.stopPropagation(); // Prevenir clic en la fila cuando se hace clic en el botón
+                e.stopPropagation(); // Prevent row click when clicking the button
                 navigator.clipboard.writeText(wallet.address)
                     .then(() => {
                         const toast = document.createElement('div');
@@ -110,7 +110,7 @@ function copyAddress(address) {
         .catch(err => console.error('Error copying address:', err));
 }
 
-// Funciones de configuración
+// Setup functions
 function setupVerification() {
     const indices = [];
     while (indices.length < 3) {
@@ -136,9 +136,9 @@ function setupVerification() {
     `).join('');
 }
 
-// Event Listener para la inicialización de la billetera
+// Event Listener for wallet initialization
 document.addEventListener('DOMContentLoaded', async () => {
-    // Manejador de configuración de contraseña
+    // Password setup handler
     const confirmPasswordBtn = document.getElementById('confirmPasswordBtn');
     if (confirmPasswordBtn) {
         confirmPasswordBtn.addEventListener('click', async () => {
@@ -203,7 +203,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    // Flujo de creación de nueva billetera
+    // New wallet creation flow
     const createNewWalletBtn = document.getElementById('createNewWallet');
     if (createNewWalletBtn) {
         createNewWalletBtn.addEventListener('click', () => {
@@ -257,7 +257,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    // Flujo de importación de billetera
+    // Wallet import flow
     const importWalletBtn = document.getElementById('importWallet');
     if (importWalletBtn) {
         importWalletBtn.addEventListener('click', () => {
@@ -269,7 +269,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    // Botón de regreso para la pantalla de nombre de billetera
+    // Back button for wallet name screen
     const backToOptionsBtn = document.getElementById('backToOptions');
     if (backToOptionsBtn) {
         backToOptionsBtn.addEventListener('click', () => {
@@ -281,7 +281,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    // Botón de regreso para la pantalla de importación
+    // Back button for import screen
     const backToImportOptionsBtn = document.getElementById('backToImportOptions');
     if (backToImportOptionsBtn) {
         backToImportOptionsBtn.addEventListener('click', () => {
@@ -300,7 +300,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    // Para el botón de alternar visibilidad de clave privada
+    // For the private key visibility toggle button
     const togglePrivateKeyBtn = document.getElementById('togglePrivateKey');
     if (togglePrivateKeyBtn) {
         togglePrivateKeyBtn.addEventListener('click', () => {
@@ -317,7 +317,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
     
-    // Para el botón de confirmar importación
+    // For the confirm import button
     const confirmImportBtn = document.getElementById('confirmImport');
     if (confirmImportBtn) {
         confirmImportBtn.addEventListener('click', async () => {
@@ -380,7 +380,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     await updateWalletsTable();
                 }
                 
-                // Configurar navegación por pestañas cuando existen billeteras
+                // Set up tab navigation when wallets exist
                 if (typeof window.setupTabNavigation === 'function') {
                     window.setupTabNavigation();
                 }
@@ -391,7 +391,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
     
-    // Para el botón Mnemonic Confirm
+    // For the Mnemonic Confirm button
     const mnemonicConfirmBtn = document.getElementById('mnemonicConfirm');
     if (mnemonicConfirmBtn) {
         mnemonicConfirmBtn.addEventListener('click', () => {
@@ -404,7 +404,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
     
-    // Para el botón Verify Words
+    // For the Verify Words button
     const verifyWordsBtn = document.getElementById('verifyWords');
     if (verifyWordsBtn) {
         verifyWordsBtn.addEventListener('click', async () => {
@@ -483,7 +483,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
     
-    // Para el botón "Create Another Wallet"
+    // For the "Create Another Wallet" button
     const createAnotherWalletBtn = document.getElementById('createAnotherWallet');
     if (createAnotherWalletBtn) {
         createAnotherWalletBtn.addEventListener('click', () => {
@@ -495,7 +495,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
     
-    // Para el botón "Back to Create Wallet"
+    // For the "Back to Create Wallet" button
     const backToCreateWalletBtn = document.getElementById('backToCreateWallet');
     if (backToCreateWalletBtn) {
         backToCreateWalletBtn.addEventListener('click', () => {
@@ -508,7 +508,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
-// Exportar funciones para hacerlas disponibles globalmente
+// Export functions to make them globally available
 window.updateWalletsTable = updateWalletsTable;
 window.startBalanceUpdates = startBalanceUpdates;
 window.getBalance = getBalance;
